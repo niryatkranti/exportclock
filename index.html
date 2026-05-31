@@ -1,0 +1,2524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Exporters Clock — Niryat Kranti</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f5f3ee;--surface:#fff;--card:#fff;
+  --brd:#e4ddd2;--brd2:#cfc7b8;
+  --saffron:#D4661A;--saffron2:#F08030;--saffron3:#FAC080;
+  --navy:#1B2B4B;--navy2:#253559;
+  --green:#1A6B3C;--green2:#22884E;--greenlt:#eaf7f0;
+  --red:#B8311F;--red2:#D94030;--redlt:#fbeae8;
+  --amber:#B8780A;--amberlt:#fef6e4;
+  --blue:#1a5fa8;--bluelt:#e8f4ff;
+  --purple:#6b21a8;--purplelt:#f0e8ff;
+  --gold:#A07808;--muted:#7A7060;--muted2:#B0A898;
+  --txt:#1B2B4B;--txt2:#3D4A5C;
+  --drawer-w:187px;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--txt);font-family:'Inter',sans-serif;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased}
+body::after{content:'';position:fixed;bottom:-50px;right:-50px;width:240px;height:240px;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='none' stroke='%231B2B4B' stroke-width='1.5' opacity='0.05'/%3E%3Ccircle cx='50' cy='50' r='8' fill='none' stroke='%231B2B4B' stroke-width='1.5' opacity='0.05'/%3E%3Ccircle cx='50' cy='50' r='30' fill='none' stroke='%231B2B4B' stroke-width='.8' opacity='0.04'/%3E%3C/svg%3E");
+  background-size:contain;pointer-events:none;z-index:0}
+.app{display:flex;flex-direction:column;height:100%;position:relative;z-index:1;overflow:hidden}
+
+/* HEADER */
+.hdr{background:var(--navy);flex-shrink:0;position:relative}
+.hdr::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--saffron) 33.3%,#fff 33.3%,#fff 66.6%,var(--green) 66.6%)}
+.hi{display:flex;align-items:center;gap:12px;padding:13px 16px 11px;min-height:60px}
+.logo-block{display:flex;align-items:center;gap:10px;flex:1;min-width:0}
+.logo-emblem{width:38px;height:38px;border:1.5px solid rgba(240,128,48,.35);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;background:rgba(240,128,48,.07);flex-shrink:0}
+.logo-emblem svg{width:21px;height:21px}
+.logo-text{min-width:0}
+.logo-main{font-family:'Playfair Display',serif;font-weight:700;font-size:18px;color:#fff;letter-spacing:.3px;line-height:1.1;white-space:nowrap}
+.logo-by{font-size:8.5px;color:rgba(255,255,255,.32);letter-spacing:2.5px;text-transform:uppercase;margin-top:3px}
+.hdr-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.ist-compact{background:rgba(255,255,255,.07);border:1px solid rgba(240,128,48,.22);border-radius:7px;padding:5px 12px;flex-shrink:0}
+.ist-il{font-size:7.5px;color:var(--saffron3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:2px;display:flex;align-items:center;gap:4px;justify-content:flex-end}
+.ist-time{font-family:'JetBrains Mono',monospace;font-weight:600;font-size:17px;color:var(--saffron3);letter-spacing:1px;line-height:1}
+.ist-date{font-size:8px;color:rgba(255,255,255,.32);margin-top:2px;text-align:right}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.2;transform:scale(1.7)}}
+.lv{display:inline-block;width:4px;height:4px;background:var(--saffron2);border-radius:50%;animation:pulse 1.5s infinite ease-in-out}
+.open-pill{background:rgba(26,107,60,.25);border:1px solid rgba(110,232,160,.22);border-radius:5px;padding:4px 10px;font-size:10px;color:rgba(255,255,255,.5);white-space:nowrap;flex-shrink:0}
+.open-pill b{color:#6ee8a0}
+.menu-btn{width:38px;height:38px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;cursor:pointer;flex-shrink:0;transition:background .2s;position:relative}
+.menu-btn:hover,.menu-btn.active-menu{background:rgba(255,255,255,.18)}
+.menu-btn span{display:block;width:16px;height:1.5px;background:#fff;border-radius:1px;transition:all .25s ease}
+.menu-btn.active-menu span:nth-child(1){transform:translateY(6.5px) rotate(45deg)}
+.menu-btn.active-menu span:nth-child(2){opacity:0;transform:scaleX(0)}
+.menu-btn.active-menu span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg)}
+.filter-dot{position:absolute;top:3px;right:3px;min-width:8px;height:8px;background:var(--saffron2);border-radius:50%;border:1.5px solid var(--navy);display:none;font-size:6px;color:#000;font-weight:700;line-height:8px;text-align:center;padding:0 1px}
+.filter-dot.show{display:block}
+
+/* TABS */
+.tabs{background:var(--surface);border-bottom:2px solid var(--brd);flex-shrink:0;display:flex;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.tabs::-webkit-scrollbar{display:none}
+.tab{padding:10px 14px;font-size:12px;font-weight:500;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;white-space:nowrap;transition:color .18s,border-color .18s;user-select:none;flex-shrink:0}
+.tab:hover{color:var(--navy)}
+.tab.active{color:var(--navy);border-bottom-color:var(--saffron);font-weight:600}
+
+/* OVERLAY + DRAWER */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:200;opacity:0;pointer-events:none;transition:opacity .25s ease}
+.overlay.show{opacity:1;pointer-events:all}
+.drawer{position:fixed;top:0;right:0;height:auto;max-height:100vh;width:var(--drawer-w);max-width:93vw;background:var(--surface);z-index:201;transform:translateX(100%);transition:transform .28s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;box-shadow:-4px 0 24px rgba(0,0,0,.15);border-radius:0 0 0 10px}
+.drawer.open{transform:translateX(0)}
+.drawer-hdr{background:var(--navy);padding:11px 12px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;position:relative}
+.drawer-hdr::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--saffron) 33.3%,#fff 33.3%,#fff 66.6%,var(--green) 66.6%)}
+.drawer-title{font-family:'Playfair Display',serif;font-size:14px;font-weight:700;color:#fff}
+.drawer-close{width:32px;height:32px;background:rgba(255,255,255,.12);border:none;border-radius:6px;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.drawer-body{overflow-y:auto;padding:10px 12px;max-height:calc(100vh - 90px)}
+.drawer-body::-webkit-scrollbar{width:4px}
+.drawer-body::-webkit-scrollbar-thumb{background:var(--brd2);border-radius:2px}
+.dsec{margin-bottom:12px}
+.dsec-title{font-size:8.5px;font-weight:600;color:var(--muted);letter-spacing:1.8px;text-transform:uppercase;margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid var(--brd)}
+.dr-search{position:relative}
+.dr-search svg{position:absolute;left:8px;top:50%;transform:translateY(-50%);width:12px;height:12px;color:var(--muted);pointer-events:none}
+#srch{width:100%;background:var(--bg);border:1px solid var(--brd2);border-radius:6px;padding:7px 8px 7px 26px;color:var(--txt);font-family:'Inter',sans-serif;font-size:12px;outline:none;transition:border-color .2s}
+#srch:focus{border-color:var(--saffron)}
+#srch::placeholder{color:var(--muted2)}
+.dr-row{display:flex;flex-direction:column;gap:3px;margin-bottom:8px}
+.dr-row label{font-size:8.5px;color:var(--muted);letter-spacing:1.2px;text-transform:uppercase;font-weight:500}
+select.drs{width:100%;background:var(--bg);border:1px solid var(--brd2);border-radius:6px;padding:7px 8px;color:var(--txt);font-family:'Inter',sans-serif;font-size:12px;outline:none;cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237A7060' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center}
+select.drs:focus{border-color:var(--saffron)}
+.biz-pills{display:flex;gap:5px;flex-wrap:wrap}
+.bpill{background:var(--bg);border:1px solid var(--brd2);border-radius:6px;padding:7px 9px;font-size:11px;font-weight:500;color:var(--muted);cursor:pointer;transition:all .18s;touch-action:manipulation}
+.bpill.bp-active{background:var(--navy);border-color:var(--navy);color:#fff}
+/* Multi-select checkbox dropdown */
+.ms-wrap{position:relative}
+.ms-trigger{width:100%;background:var(--bg);border:1px solid var(--brd2);border-radius:6px;padding:7px 28px 7px 8px;color:var(--txt);font-family:'Inter',sans-serif;font-size:12px;cursor:pointer;text-align:left;display:flex;align-items:center;justify-content:space-between;gap:5px;transition:border-color .2s;user-select:none}
+.ms-trigger:hover,.ms-trigger.open{border-color:var(--saffron)}
+.ms-trigger-label{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--txt)}
+.ms-trigger-label.placeholder{color:var(--muted2)}
+.ms-trigger-arrow{flex-shrink:0;font-size:10px;color:var(--muted);transition:transform .2s}
+.ms-trigger.open .ms-trigger-arrow{transform:rotate(180deg)}
+.ms-badge{background:var(--saffron);color:#fff;font-size:9px;font-weight:700;border-radius:9px;padding:1px 6px;flex-shrink:0}
+.ms-dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:1px solid var(--brd2);border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.12);z-index:120;overflow:hidden}
+.ms-search{padding:8px 10px;border-bottom:1px solid var(--brd)}
+.ms-search input{width:100%;background:var(--bg);border:1px solid var(--brd2);border-radius:5px;padding:6px 9px;font-family:'Inter',sans-serif;font-size:12px;color:var(--txt);outline:none}
+.ms-search input:focus{border-color:var(--saffron)}
+.ms-list{max-height:200px;overflow-y:auto}
+.ms-list::-webkit-scrollbar{width:3px}
+.ms-list::-webkit-scrollbar-thumb{background:var(--brd2);border-radius:2px}
+.ms-item{display:flex;align-items:center;gap:8px;padding:7px 10px;cursor:pointer;font-size:11px;color:var(--txt2);transition:background .12s;border-bottom:1px solid var(--bg)}
+.ms-item:last-child{border-bottom:none}
+.ms-item:hover{background:rgba(27,43,75,.05)}
+.ms-item input[type=checkbox]{accent-color:var(--navy);width:14px;height:14px;flex-shrink:0;cursor:pointer}
+.ms-item.checked{background:rgba(27,43,75,.04);color:var(--navy);font-weight:500}
+.ms-footer{padding:8px 10px;border-top:1px solid var(--brd);display:flex;justify-content:space-between;align-items:center;font-size:10px;color:var(--muted)}
+.ms-clear{background:none;border:none;font-size:10px;color:var(--red);cursor:pointer;font-family:'Inter',sans-serif;padding:2px 4px}
+.ms-clear:hover{text-decoration:underline}
+.ms-chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px;min-height:0}
+.ms-chip{background:var(--navy);color:#fff;font-size:10px;padding:3px 8px;border-radius:10px;display:flex;align-items:center;gap:4px;cursor:pointer}
+.ms-chip:hover{background:var(--navy2)}
+.ms-chip-x{font-size:11px;opacity:.7}
+/* Sort dropdown */
+.sort-dropdown-wrap{position:relative}
+.sort-trigger{width:100%;background:var(--bg);border:1px solid var(--brd2);border-radius:6px;padding:7px 28px 7px 8px;color:var(--txt);font-family:'Inter',sans-serif;font-size:12px;cursor:pointer;text-align:left;display:flex;align-items:center;justify-content:space-between;gap:5px;transition:border-color .2s;user-select:none}
+.sort-trigger:hover,.sort-trigger.open{border-color:var(--saffron)}
+.sort-trigger-label{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sort-trigger-arrow{flex-shrink:0;font-size:10px;color:var(--muted);transition:transform .2s}
+.sort-trigger.open .sort-trigger-arrow{transform:rotate(180deg)}
+.sort-dropdown{position:absolute;top:calc(100%+4px);left:0;right:0;background:#fff;border:1px solid var(--brd2);border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.13);z-index:130;overflow:hidden;display:none}
+.sort-dropdown.open{display:block}
+.sort-opt{display:flex;align-items:center;gap:7px;padding:7px 10px;cursor:pointer;font-size:11px;color:var(--txt2);transition:background .12s;border-bottom:1px solid var(--bg)}
+.sort-opt:last-child{border-bottom:none}
+.sort-opt:hover{background:rgba(27,43,75,.05)}
+.sort-opt.s-active{background:rgba(27,43,75,.07);color:var(--navy);font-weight:600}
+/* Multi-checkbox location filter */
+.loc-ms-wrap{position:relative;margin-bottom:6px}
+.loc-trigger{width:100%;background:var(--bg);border:1px solid var(--brd2);border-radius:6px;padding:6px 26px 6px 8px;font-family:'Inter',sans-serif;font-size:11px;cursor:pointer;text-align:left;display:flex;align-items:center;justify-content:space-between;gap:4px;transition:border-color .2s;user-select:none;color:var(--txt)}
+.loc-trigger:hover,.loc-trigger.open{border-color:var(--saffron)}
+.loc-trigger-lbl{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--txt)}
+.loc-trigger-lbl.ph{color:var(--muted2)}
+.loc-badge{background:var(--saffron);color:#fff;font-size:8px;font-weight:700;border-radius:8px;padding:1px 5px;flex-shrink:0}
+.loc-arr{flex-shrink:0;font-size:9px;color:var(--muted);transition:transform .2s}
+.loc-trigger.open .loc-arr{transform:rotate(180deg)}
+.loc-dropdown{position:absolute;top:calc(100%+3px);left:0;right:0;background:#fff;border:1px solid var(--brd2);border-radius:7px;box-shadow:0 8px 20px rgba(0,0,0,.12);z-index:125;display:none;overflow:hidden}
+.loc-dropdown.open{display:block}
+.loc-search{padding:7px 9px;border-bottom:1px solid var(--brd)}
+.loc-search input{width:100%;background:var(--bg);border:1px solid var(--brd2);border-radius:5px;padding:5px 8px;font-family:'Inter',sans-serif;font-size:11px;color:var(--txt);outline:none}
+.loc-search input:focus{border-color:var(--saffron)}
+.loc-list{max-height:160px;overflow-y:auto}
+.loc-list::-webkit-scrollbar{width:3px}
+.loc-list::-webkit-scrollbar-thumb{background:var(--brd2)}
+.loc-item{display:flex;align-items:center;gap:7px;padding:6px 8px;cursor:pointer;font-size:11px;color:var(--txt2);border-bottom:1px solid var(--bg);transition:background .1s}
+.loc-item:last-child{border-bottom:none}
+.loc-item:hover{background:rgba(27,43,75,.05)}
+.loc-item input[type=checkbox]{accent-color:var(--navy);width:13px;height:13px;flex-shrink:0;cursor:pointer}
+.loc-item.lc{background:rgba(27,43,75,.04);color:var(--navy);font-weight:500}
+.loc-footer{padding:6px 9px;border-top:1px solid var(--brd);display:flex;justify-content:space-between;align-items:center;font-size:9px;color:var(--muted)}
+.loc-clear{background:none;border:none;font-size:9px;color:var(--red);cursor:pointer;font-family:'Inter',sans-serif}
+.loc-chips{display:flex;flex-wrap:wrap;gap:3px;margin-top:4px;min-height:0}
+.loc-chip{background:var(--navy);color:#fff;font-size:9px;padding:2px 7px;border-radius:8px;display:flex;align-items:center;gap:3px;cursor:pointer;white-space:nowrap}
+.loc-chip:hover{background:var(--navy2)}
+/* Legend single column */
+.legend-col{display:flex;flex-direction:column;gap:5px}
+.leg2{display:flex;align-items:center;gap:8px;font-size:10.5px;color:var(--txt2)}
+.legbar{width:16px;height:4px;border-radius:2px;flex-shrink:0}
+/* Collapsible My Markets group */
+.mm-group-hdr{display:flex;align-items:center;gap:10px;padding:12px 16px;background:rgba(27,43,75,.03);cursor:pointer;user-select:none;transition:background .15s}
+.mm-group-hdr:hover{background:rgba(27,43,75,.07)}
+.mm-group-collapse{border-bottom:1px solid var(--brd)}
+.mm-group-collapse.open .mm-group-hdr{border-bottom:1px solid var(--brd)}
+.mm-group-body{display:none}
+.mm-group-collapse.open .mm-group-body{display:block}
+.mm-chevron{font-size:10px;color:var(--muted);transition:transform .22s ease;flex-shrink:0}
+.mm-group-collapse.open .mm-chevron{transform:rotate(180deg)}
+/* Add city to group - inline search in My Markets */
+.mm-add-wrap{padding:10px 16px;border-top:1px solid var(--brd);background:#fafaf7}
+.mm-add-row{display:flex;gap:6px;align-items:center}
+.mm-add-input{flex:1;background:var(--bg);border:1px solid var(--brd2);border-radius:6px;padding:8px 10px;font-family:'Inter',sans-serif;font-size:12px;color:var(--txt);outline:none;transition:border-color .2s}
+.mm-add-input:focus{border-color:var(--saffron)}
+.mm-add-input::placeholder{color:var(--muted2)}
+.mm-add-btn{background:var(--navy);color:#fff;border:none;border-radius:6px;padding:8px 13px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap}
+.mm-add-btn:hover{background:var(--navy2)}
+.mm-add-sugs{background:#fff;border:1px solid var(--brd2);border-radius:0 0 6px 6px;box-shadow:0 6px 18px rgba(0,0,0,.11);max-height:160px;overflow-y:auto;display:none;margin-top:2px}
+.mm-add-sugs.show{display:block}
+.mm-add-sug-item{display:flex;align-items:center;gap:8px;padding:8px 11px;cursor:pointer;font-size:11px;border-bottom:1px solid var(--bg);transition:background .1s}
+.mm-add-sug-item:hover,.mm-add-sug-item.mfocused{background:rgba(27,43,75,.06)}
+.mm-add-sug-item:last-child{border-bottom:none}
+/* Golden star */
+.fav-btn svg{width:13px;height:13px;stroke:#bfb8a8;fill:none;stroke-width:2;transition:stroke .15s,fill .15s}
+.fav-btn:hover svg{stroke:#c8960c;fill:rgba(200,150,12,.18)}
+.card.in-group .fav-btn svg{stroke:#c8960c;fill:#FFD700}
+.drawer-footer{padding:10px 12px;border-top:1px solid var(--brd);display:flex;gap:7px;flex-shrink:0}
+.dr-reset{flex:1;background:transparent;border:1px solid var(--brd2);border-radius:6px;padding:8px;font-size:11px;font-weight:500;color:var(--muted);cursor:pointer;font-family:'Inter',sans-serif}
+.dr-reset:hover{border-color:var(--red);color:var(--red)}
+.dr-apply{flex:2;background:var(--navy);border:none;border-radius:6px;padding:8px;font-size:11px;font-weight:600;color:#fff;cursor:pointer;font-family:'Inter',sans-serif}
+
+/* COUNT BAR */
+.count-bar{background:var(--surface);border-bottom:1px solid var(--brd);padding:5px 16px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;font-size:10px;color:var(--muted);flex-wrap:wrap;gap:4px}
+.count-bar b{color:var(--navy)}
+.active-filters{display:flex;gap:4px;flex-wrap:wrap}
+.af-chip{background:var(--navy);color:#fff;font-size:9px;padding:2px 8px;border-radius:10px;display:flex;align-items:center;gap:3px;cursor:pointer}
+.af-chip svg{width:9px;height:9px}
+
+/* SCROLL HINT */
+.scroll-hint{height:0;overflow:hidden;background:var(--bg);border-bottom:1px solid var(--brd);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--muted);gap:5px;transition:height .22s ease;flex-shrink:0;cursor:pointer}
+.scroll-hint.show{height:26px}
+.scroll-hint svg{width:11px;height:11px}
+
+/* MAIN */
+.main{flex:1;overflow-y:auto;min-height:0;padding:10px 14px 80px;background:var(--bg);-webkit-overflow-scrolling:touch}
+.main::-webkit-scrollbar{width:4px}
+.main::-webkit-scrollbar-thumb{background:var(--brd2);border-radius:3px}
+
+/* VIEWS */
+#clockView,#compView{display:block}
+#tableView,#calcView,#holidayView,#tipsView,#compView,#myMarketsView{display:none}
+
+/* GRID */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:7px}
+
+/* CARD */
+.card{background:var(--card);border:1px solid var(--brd);border-radius:8px;padding:10px 12px;position:relative;transition:transform .15s,box-shadow .2s,border-color .2s}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:8px 8px 0 0}
+.card.ah::before{background:linear-gradient(90deg,var(--green),var(--green2))}
+.card.bh::before{background:linear-gradient(90deg,var(--red),var(--red2))}
+.card.sm::before,.card.ic::before{background:linear-gradient(90deg,var(--saffron),var(--saffron2))}
+.card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(27,43,75,.1);border-color:var(--brd2)}
+.card.ic{background:linear-gradient(135deg,#fffdf8,#fff7ee);border-color:#e2cdb0}
+.card.biz-call{box-shadow:0 0 0 2px rgba(26,95,168,.2)}
+.card.biz-mail{box-shadow:0 0 0 2px rgba(107,33,168,.15)}
+.card.biz-open{box-shadow:0 0 0 2px rgba(26,107,60,.18)}
+.card.biz-closing{box-shadow:0 0 0 2px rgba(184,120,10,.18)}
+.ct{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px}
+.ct-left{display:flex;align-items:flex-start;gap:6px;min-width:0}
+.fl2{font-size:18px;line-height:1.2;flex-shrink:0}
+.cn{font-size:11.5px;font-weight:600;color:var(--txt);line-height:1.25}
+.cc{font-size:8.5px;color:var(--muted);margin-top:1px}
+.clang{font-size:7.5px;color:var(--muted2);margin-top:1px;font-style:italic}
+.tb{font-family:'JetBrains Mono',monospace;font-weight:600;font-size:18px;letter-spacing:.5px;line-height:1;color:var(--txt)}
+.card.ic .cn,.card.ic .tb{color:var(--saffron)}
+.bstat{display:inline-flex;align-items:center;gap:3px;font-size:7.5px;font-weight:600;padding:2px 6px;border-radius:3px;margin:3px 0;letter-spacing:.2px;white-space:nowrap}
+.bs-open{background:var(--greenlt);color:var(--green);border:1px solid rgba(26,107,60,.18)}
+.bs-call{background:var(--bluelt);color:var(--blue);border:1px solid rgba(26,95,168,.2)}
+.bs-mail{background:var(--purplelt);color:var(--purple);border:1px solid rgba(107,33,168,.2)}
+.bs-not_open{background:#fff8e0;color:#92600a;border:1px solid rgba(146,96,10,.2)}
+.bs-closing{background:var(--amberlt);color:var(--amber);border:1px solid rgba(184,120,10,.2)}
+.bs-closed{background:var(--redlt);color:var(--red2);border:1px solid rgba(184,49,31,.12)}
+.bs-lunch{background:#fff8e6;color:#9B6500;border:1px solid rgba(184,120,10,.15)}
+.bs-weekend{background:#f0f0f8;color:#606080;border:1px solid #d0d0e0}
+.dd{font-size:7.5px;color:var(--gold);margin:1px 0;min-height:9px;font-weight:500}
+.cf{display:flex;justify-content:space-between;align-items:flex-end;margin-top:4px}
+.ds{font-size:8px;color:var(--muted)}
+.uts{font-size:7px;color:var(--muted2);margin-top:1px}
+.ot{font-size:8.5px;font-weight:600;padding:2px 5px;border-radius:3px;white-space:nowrap;border:1px solid}
+.ah .ot{color:var(--green);border-color:rgba(26,107,60,.2);background:rgba(26,107,60,.06)}
+.bh .ot{color:var(--red);border-color:rgba(184,49,31,.18);background:rgba(184,49,31,.05)}
+.sm .ot,.ic .ot{color:var(--saffron);border-color:rgba(212,102,26,.25);background:rgba(212,102,26,.07)}
+/* Favourite star on card */
+.fav-btn{position:absolute;top:7px;right:7px;width:16px;height:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:2}
+.hidden{display:none!important}
+
+/* TABLE */
+.tbl-wrap{border:1px solid var(--brd);border-radius:8px;background:#fff;overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;font-size:11px;min-width:420px}
+thead th{background:var(--navy);color:#fff;padding:7px 5px;font-weight:600;text-align:left;font-size:10px;white-space:nowrap;position:sticky;top:0;z-index:2}
+tbody tr{border-bottom:1px solid var(--brd);transition:background .12s}
+tbody tr:hover{background:#fafaf7}
+tbody tr:last-child{border-bottom:none}
+td{padding:5px 5px;vertical-align:middle;white-space:nowrap}
+td.tcity{font-weight:600}td.ttime{font-family:'JetBrains Mono',monospace;font-weight:600;font-size:12px;letter-spacing:.3px}
+td.toff{font-size:10px;font-weight:600}td.tflag{font-size:15px;padding:5px 3px}
+td.tlang{font-size:9.5px;color:var(--muted);font-style:italic;max-width:130px;overflow:hidden;text-overflow:ellipsis}
+tr.india-row{background:#fffcf5}tr.india-row td{color:var(--saffron)}tr.india-row td.ttime{font-weight:700}
+
+/* ── COMPARISON VIEW (WorldTimeBuddy style) ── */
+.comp-header{display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+.comp-title{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:var(--navy)}
+.comp-sub{font-size:11px;color:var(--muted);margin-left:auto}
+.comp-add-btn{background:var(--navy);color:#fff;border:none;border-radius:6px;padding:7px 14px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap}
+.comp-add-btn:hover{background:var(--navy2)}
+.comp-table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--brd);border-radius:10px;background:#fff;scroll-behavior:smooth;position:relative}
+/* Vertical time lines in comp view */
+.comp-wrap-outer{position:relative;overflow:hidden;border:1px solid var(--brd);border-radius:10px;background:#fff}
+.comp-now-line{position:absolute;top:0;bottom:0;width:2px;background:rgba(26,107,60,.7);z-index:10;pointer-events:none;transition:left .5s ease}
+.comp-now-line::before{content:attr(data-time);position:absolute;top:6px;left:4px;font-size:8px;font-weight:700;color:var(--green);letter-spacing:.5px;white-space:nowrap;background:rgba(255,255,255,.95);padding:2px 6px;border-radius:3px;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+.comp-seek-line{position:absolute;top:0;bottom:0;width:2px;background:rgba(26,95,168,.6);z-index:11;cursor:ew-resize;display:none;transition:left .1s}
+.comp-seek-line::before{content:"";position:absolute;top:0;bottom:0;left:-8px;right:-8px}
+.comp-seek-label{position:absolute;top:28px;left:4px;font-size:9px;font-weight:600;color:var(--blue);background:rgba(255,255,255,.97);padding:8px 10px;border-radius:6px;white-space:nowrap;border:1px solid rgba(26,95,168,.2);pointer-events:none;z-index:12;box-shadow:0 4px 16px rgba(0,0,0,.12)}
+.comp-seek-col{background:rgba(26,95,168,.05)!important}
+.comp-instructions{font-size:10px;color:var(--muted);margin-bottom:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.comp-instructions .ci-item{display:flex;align-items:center;gap:4px}
+.comp-instructions .ci-dot{width:10px;height:10px;border-radius:2px}
+.comp-table{min-width:600px;border-collapse:collapse;width:100%}
+/* Row for each city */
+.comp-row{border-bottom:1px solid var(--brd)}
+.comp-row:last-child{border-bottom:none}
+.comp-row.india-comp{background:#fffcf5}
+.comp-cell-info{width:180px;min-width:160px;padding:10px 14px;border-right:1px solid var(--brd);vertical-align:middle;position:sticky;left:0;background:#fff;z-index:1}
+.comp-row.india-comp .comp-cell-info{background:#fffcf5}
+.comp-city-name{font-size:12px;font-weight:600;color:var(--txt);display:flex;align-items:center;gap:6px}
+.comp-country{font-size:10px;color:var(--muted);margin-top:1px}
+.comp-lang{font-size:9px;color:var(--muted2);font-style:italic;margin-top:1px}
+.comp-now{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:15px;color:var(--navy);margin-top:4px}
+.comp-bstat{display:inline-block;font-size:8px;font-weight:600;padding:2px 6px;border-radius:3px;margin-top:3px;white-space:nowrap}
+/* Hour cells */
+.comp-hours-row{display:flex}
+.comp-hour{min-width:48px;padding:9px 3px;text-align:center;border-right:1px solid var(--brd);font-size:10px;font-family:'JetBrains Mono',monospace;position:relative;flex-shrink:0;transition:background .1s}
+.comp-hour:last-child{border-right:none}
+.comp-hour.work{background:#eaf7f0}
+.comp-hour.best{background:#dceeff}
+.comp-hour.mail{background:#f0e8ff}
+.comp-hour.lunch{background:#fff8e0}
+.comp-hour.weekend{background:#f0f0f8}
+.comp-hour.now{background:var(--navy);color:#fff !important;border-radius:4px}
+.comp-hour .ch-time{font-size:9px;font-weight:600;color:var(--navy)}
+.comp-hour.now .ch-time{color:#fff}
+.comp-hour .ch-label{font-size:7px;color:var(--muted);margin-top:1px}
+.comp-hour.now .ch-label{color:rgba(255,255,255,.7)}
+/* IST header row */
+
+/* Remove city btn */
+.comp-remove{cursor:pointer;color:var(--muted2);font-size:11px;margin-left:auto;flex-shrink:0;padding:2px 4px;border-radius:3px;transition:color .15s}
+.comp-remove:hover{color:var(--red)}
+/* Add city panel */
+.comp-add-panel{background:#fff;border:1px solid var(--brd);border-radius:8px;padding:14px 16px;margin-bottom:12px}
+.comp-add-panel h4{font-size:13px;font-weight:600;color:var(--navy);margin-bottom:10px}
+.comp-add-row{display:flex;gap:8px;flex-wrap:wrap}
+.comp-city-select{flex:1;min-width:180px;background:var(--bg);border:1px solid var(--brd2);border-radius:6px;padding:9px 10px;color:var(--txt);font-family:'Inter',sans-serif;font-size:13px;outline:none}
+.comp-city-select:focus{border-color:var(--saffron)}
+.comp-add-go{background:var(--navy);color:#fff;border:none;border-radius:6px;padding:9px 16px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap}
+.comp-add-go:hover{background:var(--navy2)}
+.comp-hint{font-size:10px;color:var(--muted);margin-top:6px}
+/* Hour legend */
+
+.comp-table-wrap{border:1px solid var(--brd);border-radius:10px;background:#fff;overflow-x:auto;-webkit-overflow-scrolling:touch;scroll-behavior:smooth}
+
+/* Planner city search */
+.planner-search-wrap{position:relative;width:100%}
+.planner-search-input{width:100%;background:var(--bg);border:1px solid var(--brd2);border-radius:6px;padding:9px 10px;color:var(--txt);font-family:'Inter',sans-serif;font-size:13px;outline:none;transition:border-color .2s;-webkit-appearance:none}
+.planner-search-input:focus{border-color:var(--saffron)}
+.planner-search-input::placeholder{color:var(--muted2)}
+.planner-suggestions{position:absolute;top:100%;left:0;right:0;background:#fff;border:1px solid var(--brd2);border-radius:0 0 7px 7px;box-shadow:0 6px 20px rgba(0,0,0,.12);z-index:100;max-height:180px;overflow-y:auto;display:none}
+.planner-suggestions.show{display:block}
+.planner-sug-item{display:flex;align-items:center;gap:8px;padding:8px 12px;cursor:pointer;font-size:12px;border-bottom:1px solid var(--bg);transition:background .12s}
+.planner-sug-item:last-child{border-bottom:none}
+.planner-sug-item:hover,.planner-sug-item.pfocused{background:rgba(27,43,75,.06)}
+.planner-sug-item .psug-flag{font-size:16px;flex-shrink:0}
+.planner-sug-item .psug-city{font-weight:600;color:var(--txt);font-size:12px}
+.planner-sug-item .psug-country{font-size:10px;color:var(--muted)}
+.planner-sug-item .psug-tz{font-size:9px;color:var(--muted2);margin-left:auto;white-space:nowrap}
+/* Compare search autocomplete */
+.comp-search-wrap{position:relative}
+.comp-search-box-wrap{display:flex;gap:8px;align-items:center;margin-bottom:0}
+.comp-search-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:13px;height:13px;color:var(--muted);pointer-events:none;z-index:1}
+.comp-search-input{flex:1;background:var(--bg);border:1px solid var(--brd2);border-radius:7px;padding:9px 10px 9px 30px;color:var(--txt);font-family:'Inter',sans-serif;font-size:13px;outline:none;transition:border-color .2s;position:relative}
+.comp-search-input:focus{border-color:var(--saffron)}
+.comp-search-input::placeholder{color:var(--muted2)}
+.comp-suggestions{position:absolute;top:100%;left:0;right:50px;background:#fff;border:1px solid var(--brd2);border-radius:0 0 8px 8px;box-shadow:0 8px 24px rgba(0,0,0,.12);z-index:50;max-height:220px;overflow-y:auto;display:none}
+.comp-suggestions.show{display:block}
+.comp-sug-item{display:flex;align-items:center;gap:10px;padding:9px 14px;cursor:pointer;font-size:12px;border-bottom:1px solid var(--bg);transition:background .12s}
+.comp-sug-item:last-child{border-bottom:none}
+.comp-sug-item:hover,.comp-sug-item.focused{background:rgba(27,43,75,.06)}
+.comp-sug-item.selected{background:rgba(27,43,75,.1);font-weight:600}
+.comp-sug-flag{font-size:18px;flex-shrink:0}
+.comp-sug-city{font-weight:600;color:var(--txt)}
+.comp-sug-country{font-size:10px;color:var(--muted)}
+.comp-sug-tz{font-size:9px;color:var(--muted2);margin-left:auto;white-space:nowrap}
+.comp-sug-no{padding:12px 14px;font-size:12px;color:var(--muted);text-align:center}
+/* Language filter in drawer */
+.lang-search-wrap{position:relative;margin-bottom:8px}
+.lang-search-input{width:100%;background:var(--bg);border:1px solid var(--brd2);border-radius:6px;padding:9px 10px;color:var(--txt);font-family:'Inter',sans-serif;font-size:13px;outline:none;transition:border-color .2s}
+.lang-search-input:focus{border-color:var(--saffron)}
+.lang-search-input::placeholder{color:var(--muted2)}
+.lang-suggestions{position:absolute;top:100%;left:0;right:0;background:#fff;border:1px solid var(--brd2);border-radius:0 0 7px 7px;box-shadow:0 6px 20px rgba(0,0,0,.1);z-index:60;max-height:160px;overflow-y:auto;display:none}
+.lang-suggestions.show{display:block}
+.lang-sug-item{padding:8px 12px;cursor:pointer;font-size:12px;border-bottom:1px solid var(--bg);transition:background .12s}
+.lang-sug-item:hover{background:rgba(27,43,75,.06)}
+.lang-selected{display:flex;flex-wrap:wrap;gap:5px;min-height:0}
+.lang-chip{background:var(--navy);color:#fff;font-size:10px;padding:3px 8px;border-radius:10px;display:flex;align-items:center;gap:4px;cursor:pointer}
+.lang-chip:hover{background:var(--navy2)}
+.lang-chip-x{font-size:11px;opacity:.7}
+/* No results in suggest */
+.comp-sug-noresult{padding:10px 14px;font-size:11px;color:var(--muted);font-style:italic}
+.comp-legend{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;font-size:10px;color:var(--muted)}
+.cl-item{display:flex;align-items:center;gap:4px}
+.cl-dot{width:12px;height:8px;border-radius:2px}
+
+/* ── MY MARKETS VIEW ── */
+.mm-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px}
+.mm-title{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:var(--navy)}
+.mm-actions{display:flex;gap:6px;flex-wrap:wrap}
+.mm-btn{background:var(--navy);color:#fff;border:none;border-radius:6px;padding:7px 14px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap}
+.mm-btn:hover{background:var(--navy2)}
+.mm-btn.secondary{background:transparent;color:var(--navy);border:1px solid var(--brd2)}
+.mm-btn.secondary:hover{border-color:var(--navy)}
+.mm-btn.danger{background:transparent;color:var(--red);border:1px solid rgba(184,49,31,.25)}
+.mm-btn.danger:hover{background:var(--redlt)}
+.mm-groups{display:flex;flex-direction:column;gap:12px}
+.mm-group{background:#fff;border:1px solid var(--brd);border-radius:10px;overflow:hidden}
+.mm-group-name{font-size:13px;font-weight:600;color:var(--navy);flex:1}
+.mm-group-count{font-size:10px;color:var(--muted);background:var(--bg);border-radius:10px;padding:2px 8px}
+.mm-group-btns{display:flex;gap:4px}
+.mm-gbtn{background:transparent;border:1px solid var(--brd2);border-radius:5px;padding:4px 10px;font-size:10px;color:var(--muted);cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap}
+.mm-gbtn:hover{border-color:var(--navy);color:var(--navy)}
+.mm-gbtn.del-grp{color:var(--red);border-color:rgba(184,49,31,.25)}
+.mm-gbtn.del-grp:hover{background:var(--redlt)}
+.mm-cities{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:6px;padding:12px 16px}
+.mm-empty{padding:30px;text-align:center;color:var(--muted);font-size:12px}
+.mm-empty-hint{margin-top:6px;font-size:11px;color:var(--muted2)}
+/* Add group modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:300;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .2s}
+.modal-overlay.show{opacity:1;pointer-events:all}
+.modal{background:#fff;border-radius:12px;padding:24px;max-width:400px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.modal h3{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:var(--navy);margin-bottom:14px}
+.modal-input{width:100%;background:var(--bg);border:1px solid var(--brd2);border-radius:7px;padding:10px 12px;color:var(--txt);font-family:'Inter',sans-serif;font-size:14px;outline:none;transition:border-color .2s;margin-bottom:14px}
+.modal-input:focus{border-color:var(--saffron)}
+.modal-btns{display:flex;gap:8px;justify-content:flex-end}
+.modal-cancel{background:transparent;border:1px solid var(--brd2);border-radius:7px;padding:9px 18px;font-size:12px;color:var(--muted);cursor:pointer;font-family:'Inter',sans-serif}
+.modal-ok{background:var(--navy);border:none;border-radius:7px;padding:9px 18px;font-size:12px;font-weight:600;color:#fff;cursor:pointer;font-family:'Inter',sans-serif}
+
+/* PLANNER */
+.panel{max-width:680px;margin:0 auto;padding:4px 0 20px}
+.panel-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--navy);margin-bottom:3px}
+.panel-sub{font-size:11px;color:var(--muted);margin-bottom:18px;line-height:1.65}
+.tool-card{background:#fff;border:1px solid var(--brd);border-radius:10px;padding:16px 18px;margin-bottom:12px}
+.tool-card h3{font-size:13px;font-weight:600;color:var(--navy);margin-bottom:11px;display:flex;align-items:center;gap:7px}
+.form-row{display:flex;gap:9px;flex-wrap:wrap;align-items:flex-end;margin-bottom:10px}
+.fg2{display:flex;flex-direction:column;gap:4px;flex:1;min-width:120px}
+.fg2 label{font-size:9px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;font-weight:500}
+.fg2 input,.fg2 select{background:var(--bg);border:1px solid var(--brd2);border-radius:6px;padding:9px 10px;color:var(--txt);font-family:'Inter',sans-serif;font-size:13px;outline:none;transition:border-color .2s;width:100%;-webkit-appearance:none}
+.fg2 input:focus,.fg2 select:focus{border-color:var(--saffron)}
+.calc-btn{touch-action:manipulation;background:var(--navy);color:#fff;border:none;border-radius:7px;padding:10px 18px;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;letter-spacing:.3px;width:100%}
+.calc-btn:hover{background:var(--navy2)}
+.result-box{background:var(--bg);border:1px solid var(--brd);border-radius:7px;padding:12px 14px;margin-top:12px;display:none}
+.result-box.show{display:block}
+.rrow{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--brd);font-size:11px}
+.rrow:last-of-type{border-bottom:none}
+.rl{color:var(--muted)}.rv{font-weight:600;color:var(--navy);font-family:'JetBrains Mono',monospace;font-size:11px}
+.rv.good{color:var(--green)}.rv.warn{color:var(--amber)}.rv.bad{color:var(--red)}
+.result-hl{background:var(--navy);color:#fff;border-radius:6px;padding:10px 13px;margin-top:10px;font-size:11px;line-height:1.7}
+
+/* HOLIDAYS */
+.hol-intro{font-size:11px;color:var(--muted2);background:#fff;border:1px solid var(--brd);border-radius:8px;padding:12px 14px;margin-bottom:12px;line-height:1.7}
+.hol-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:8px}
+.hol-card{background:#fff;border:1px solid var(--brd);border-radius:8px;padding:13px 15px}
+.hol-hdr{display:flex;align-items:center;gap:8px;margin-bottom:9px;padding-bottom:7px;border-bottom:1px solid var(--brd)}
+.hol-flag{font-size:19px}.hol-cname{font-size:13px;font-weight:600;color:var(--navy)}
+.hol-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--bg);font-size:11px}
+.hol-row:last-child{border-bottom:none}
+.hol-name{color:var(--txt2);flex:1;padding-right:6px}
+.hol-date{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);margin-right:5px;white-space:nowrap}
+.hol-badge{font-size:8px;padding:1px 6px;border-radius:3px;font-weight:600;white-space:nowrap}
+.badge-today{background:rgba(212,102,26,.15);color:var(--saffron)}
+.badge-soon{background:var(--greenlt);color:var(--green)}.badge-past{background:var(--bg);color:var(--muted2)}
+
+/* TIPS */
+.tips-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:9px}
+.tip-card{background:#fff;border:1px solid var(--brd);border-radius:8px;padding:15px 16px}
+.tip-tag{display:inline-block;font-size:8px;padding:2px 8px;border-radius:3px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px}
+.tag-t{background:rgba(27,43,75,.08);color:var(--navy)}.tag-b{background:var(--greenlt);color:var(--green)}
+.tag-h{background:rgba(212,102,26,.1);color:var(--saffron)}.tag-c{background:var(--amberlt);color:var(--amber)}
+.tip-card h4{font-size:13px;font-weight:600;color:var(--navy);margin-bottom:7px;display:flex;align-items:center;gap:7px}
+.tip-card ul{padding-left:14px}.tip-card li{font-size:11px;color:var(--txt2);line-height:1.75;margin-bottom:1px}
+.tip-card li b{color:var(--navy)}
+
+/* HOME LOCATION MODAL */
+.home-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:600;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .22s ease}
+.home-modal-overlay.show{opacity:1;pointer-events:all}
+.home-modal{background:#fff;border-radius:12px;width:min(420px,93vw);box-shadow:0 16px 48px rgba(0,0,0,.22);overflow:hidden;transform:translateY(10px);transition:transform .22s ease}
+.home-modal-overlay.show .home-modal{transform:translateY(0)}
+.home-modal-hdr{background:var(--navy);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;position:relative}
+.home-modal-hdr::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--saffron) 33.3%,#fff 33.3%,#fff 66.6%,var(--green) 66.6%)}
+.home-modal-title{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:#fff;display:flex;align-items:center;gap:8px}
+.home-modal-close{width:28px;height:28px;background:rgba(255,255,255,.12);border:none;border-radius:5px;color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.home-modal-body{padding:16px}
+.home-modal-hint{font-size:11px;color:var(--muted);margin-bottom:12px;line-height:1.6;background:var(--amberlt);border:1px solid rgba(184,120,10,.2);border-radius:6px;padding:8px 11px}
+.home-search-wrap{position:relative}
+.home-search-input{width:100%;background:var(--bg);border:1.5px solid var(--brd2);border-radius:8px;padding:10px 12px 10px 34px;color:var(--txt);font-family:'Inter',sans-serif;font-size:14px;outline:none;transition:border-color .2s}
+.home-search-input:focus{border-color:var(--saffron)}
+.home-search-input::placeholder{color:var(--muted2)}
+.home-search-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:15px;height:15px;color:var(--muted);pointer-events:none}
+.home-suggestions{max-height:240px;overflow-y:auto;margin-top:6px;border:1px solid var(--brd2);border-radius:8px;background:#fff;display:none}
+.home-suggestions.show{display:block}
+.home-suggestions::-webkit-scrollbar{width:3px}
+.home-suggestions::-webkit-scrollbar-thumb{background:var(--brd2);border-radius:2px}
+.home-sug-item{display:flex;align-items:center;gap:10px;padding:10px 13px;cursor:pointer;border-bottom:1px solid var(--bg);transition:background .12s}
+.home-sug-item:last-child{border-bottom:none}
+.home-sug-item:hover,.home-sug-item.hfocused{background:rgba(27,43,75,.06)}
+.home-sug-item.h-selected{background:rgba(212,102,26,.08);font-weight:600}
+.home-sug-flag{font-size:19px;flex-shrink:0}
+.home-sug-city{font-weight:600;color:var(--txt);font-size:13px}
+.home-sug-country{font-size:10px;color:var(--muted)}
+.home-sug-tz{font-size:10px;color:var(--muted2);margin-left:auto;white-space:nowrap;font-family:'JetBrains Mono',monospace}
+.home-current-row{display:flex;align-items:center;gap:10px;background:rgba(27,43,75,.04);border:1px solid var(--brd);border-radius:8px;padding:10px 13px;margin-bottom:12px}
+.home-current-flag{font-size:20px}
+.home-current-info{flex:1;min-width:0}
+.home-current-city{font-weight:600;font-size:13px;color:var(--navy)}
+.home-current-sub{font-size:10px;color:var(--muted);margin-top:1px}
+.home-current-badge{font-size:8px;background:var(--saffron);color:#fff;padding:2px 8px;border-radius:10px;font-weight:600;white-space:nowrap;flex-shrink:0}
+/* Clickable clock style */
+.ist-compact{cursor:pointer;user-select:none;transition:background .18s,border-color .18s}
+.ist-compact:hover{background:rgba(255,255,255,.15)!important;border-color:rgba(240,128,48,.5)!important}
+.ist-compact-hint{font-size:6.5px;color:rgba(255,255,255,.28);text-align:center;margin-top:2px;letter-spacing:.5px}
+
+/* RESPONSIVE */
+@media(max-width:900px){.grid{grid-template-columns:repeat(auto-fill,minmax(155px,1fr))}.open-pill{display:none}}
+@media(max-width:700px){.grid{grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:6px}.tb{font-size:17px}.hol-grid{grid-template-columns:1fr}.tips-grid{grid-template-columns:1fr}.mm-cities{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:480px){
+  .hi{padding:9px 12px 8px;gap:8px}.logo-main{font-size:15px}.logo-emblem{width:32px;height:32px}.logo-emblem svg{width:17px;height:17px}
+  .ist-time{font-size:15px}.ist-date{display:none}.grid{grid-template-columns:repeat(2,1fr);gap:5px}
+  .tb{font-size:16px;letter-spacing:0}.card{padding:8px 9px}.fl2{font-size:16px}
+  .tab{padding:9px 10px;font-size:11px}.main{padding:8px 10px 80px}.tool-card{padding:12px 13px}
+  .comp-cell-info{width:130px;min-width:120px;padding:8px 10px}.comp-hour{min-width:44px;padding:8px 2px}.comp-ruler-cell{min-width:44px;padding:7px 2px}
+  .mm-cities{grid-template-columns:repeat(2,1fr);gap:5px}
+}
+@media(max-width:360px){.grid{grid-template-columns:repeat(2,1fr);gap:4px}.tb{font-size:14px}.ist-time{font-size:13px;letter-spacing:.5px}}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- MINI CONFIRM MODAL for delete -->
+<div class="modal-overlay" id="confirmOverlay">
+  <div class="modal" style="max-width:340px">
+    <h3 id="confirmTitle">Delete Group?</h3>
+    <p id="confirmMsg" style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.6"></p>
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeConfirm()">Cancel</button>
+      <button class="modal-ok" id="confirmOkBtn" style="background:var(--red)">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL for group name -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <h3>Create Market Group</h3>
+    <input class="modal-input" id="groupNameInput" type="text" placeholder="e.g. Middle East, Europe Buyers…" maxlength="30">
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeModal()">Cancel</button>
+      <button class="modal-ok" onclick="confirmCreateGroup()">Create Group</button>
+    </div>
+  </div>
+</div>
+
+<!-- HOME LOCATION MODAL -->
+<div class="home-modal-overlay" id="homeModalOverlay">
+  <div class="home-modal">
+    <div class="home-modal-hdr">
+      <div class="home-modal-title">🏠 Set Home Location</div>
+      <button class="home-modal-close" onclick="closeHomeModal()">✕</button>
+    </div>
+    <div class="home-modal-body">
+      <div class="home-modal-hint">Your home city is the reference for all time offsets, the live clock in the header, and the HOME row in Compare. Defaults to New Delhi (IST).</div>
+      <div class="home-current-row" id="homeCurrentRow">
+        <div class="home-current-flag" id="homeCurrentFlag">🇮🇳</div>
+        <div class="home-current-info">
+          <div class="home-current-city" id="homeCurrentCity">New Delhi</div>
+          <div class="home-current-sub" id="homeCurrentSub">India · Asia/Kolkata</div>
+        </div>
+        <div class="home-current-badge">Current Home</div>
+      </div>
+      <div class="home-search-wrap">
+        <svg class="home-search-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input type="text" id="homeSearchInput" class="home-search-input" placeholder="Search city or country…" autocomplete="off">
+      </div>
+      <div class="home-suggestions" id="homeSuggestions"></div>
+    </div>
+  </div>
+</div>
+
+<!-- OVERLAY -->
+<div class="overlay" id="overlay" onclick="closeDrawer()"></div>
+
+<!-- FILTER DRAWER -->
+<div class="drawer" id="drawer">
+  <div class="drawer-hdr">
+    <span class="drawer-title">Filters &amp; Sort</span>
+    <button class="drawer-close" onclick="closeDrawer()">✕</button>
+  </div>
+  <div class="drawer-body">
+    <div class="dsec">
+      <div class="dsec-title">Search</div>
+      <div class="dr-search">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input id="srch" type="text" placeholder="City or country…" autocomplete="off">
+      </div>
+    </div>
+    <div class="dsec">
+      <div class="dsec-title">Filter by Location</div>
+      <!-- Continent multi-checkbox -->
+      <div class="dr-row">
+        <label>Continent</label>
+        <div class="loc-ms-wrap" id="locWrap_cont">
+          <div class="loc-trigger" id="locTrig_cont" onclick="toggleLocMs('cont')">
+            <span class="loc-trigger-lbl ph" id="locLbl_cont">All Continents…</span>
+            <span class="loc-badge" id="locBadge_cont" style="display:none"></span>
+            <span class="loc-arr">▼</span>
+          </div>
+          <div class="loc-dropdown" id="locDrop_cont">
+            <div class="loc-list" id="locList_cont">
+              <label class="loc-item"><input type="checkbox" value="Asia"> Asia</label>
+              <label class="loc-item"><input type="checkbox" value="Europe"> Europe</label>
+              <label class="loc-item"><input type="checkbox" value="Africa"> Africa</label>
+              <label class="loc-item"><input type="checkbox" value="North America"> North America</label>
+              <label class="loc-item"><input type="checkbox" value="South America"> South America</label>
+              <label class="loc-item"><input type="checkbox" value="Oceania"> Oceania</label>
+            </div>
+            <div class="loc-footer"><span id="locCount_cont">0 selected</span><button class="loc-clear" onclick="clearLocMs('cont')">Clear</button></div>
+          </div>
+          <div class="loc-chips" id="locChips_cont"></div>
+        </div>
+      </div>
+      <!-- Region multi-checkbox -->
+      <div class="dr-row">
+        <label>Region</label>
+        <div class="loc-ms-wrap" id="locWrap_reg">
+          <div class="loc-trigger" id="locTrig_reg" onclick="toggleLocMs('reg')">
+            <span class="loc-trigger-lbl ph" id="locLbl_reg">All Regions…</span>
+            <span class="loc-badge" id="locBadge_reg" style="display:none"></span>
+            <span class="loc-arr">▼</span>
+          </div>
+          <div class="loc-dropdown" id="locDrop_reg">
+            <div class="loc-search"><input type="text" id="locSearch_reg" placeholder="Search regions…" autocomplete="off" oninput="filterLocList('reg',this.value)"></div>
+            <div class="loc-list" id="locList_reg"></div>
+            <div class="loc-footer"><span id="locCount_reg">0 selected</span><button class="loc-clear" onclick="clearLocMs('reg')">Clear</button></div>
+          </div>
+          <div class="loc-chips" id="locChips_reg"></div>
+        </div>
+      </div>
+      <!-- Country multi-checkbox -->
+      <div class="dr-row">
+        <label>Country</label>
+        <div class="loc-ms-wrap" id="locWrap_ctr">
+          <div class="loc-trigger" id="locTrig_ctr" onclick="toggleLocMs('ctr')">
+            <span class="loc-trigger-lbl ph" id="locLbl_ctr">All Countries…</span>
+            <span class="loc-badge" id="locBadge_ctr" style="display:none"></span>
+            <span class="loc-arr">▼</span>
+          </div>
+          <div class="loc-dropdown" id="locDrop_ctr">
+            <div class="loc-search"><input type="text" id="locSearch_ctr" placeholder="Search countries…" autocomplete="off" oninput="filterLocList('ctr',this.value)"></div>
+            <div class="loc-list" id="locList_ctr"></div>
+            <div class="loc-footer"><span id="locCount_ctr">0 selected</span><button class="loc-clear" onclick="clearLocMs('ctr')">Clear</button></div>
+          </div>
+          <div class="loc-chips" id="locChips_ctr"></div>
+        </div>
+      </div>
+      <!-- UTC Offset multi-checkbox -->
+      <div class="dr-row">
+        <label>UTC Offset</label>
+        <div class="loc-ms-wrap" id="locWrap_tz">
+          <div class="loc-trigger" id="locTrig_tz" onclick="toggleLocMs('tz')">
+            <span class="loc-trigger-lbl ph" id="locLbl_tz">All Offsets…</span>
+            <span class="loc-badge" id="locBadge_tz" style="display:none"></span>
+            <span class="loc-arr">▼</span>
+          </div>
+          <div class="loc-dropdown" id="locDrop_tz">
+            <div class="loc-list" id="locList_tz"></div>
+            <div class="loc-footer"><span id="locCount_tz">0 selected</span><button class="loc-clear" onclick="clearLocMs('tz')">Clear</button></div>
+          </div>
+          <div class="loc-chips" id="locChips_tz"></div>
+        </div>
+      </div>
+    </div>
+    <div class="dsec">
+      <div class="dsec-title">Business Hours Filter</div>
+      <div class="ms-wrap" id="bizMsWrap">
+        <div class="ms-trigger" id="bizMsTrigger" onclick="toggleMs('biz')">
+          <span class="ms-trigger-label placeholder" id="bizMsLabel">Any status…</span>
+          <span class="ms-badge" id="bizMsBadge" style="display:none"></span>
+          <span class="ms-trigger-arrow">▼</span>
+        </div>
+        <div class="ms-dropdown" id="bizMsDropdown" style="display:none">
+          <div class="ms-list" id="bizMsList">
+            <label class="ms-item"><input type="checkbox" value="best_call"> 📞 Best to Call</label>
+            <label class="ms-item"><input type="checkbox" value="best_mail"> 📧 Best to Email</label>
+            <label class="ms-item"><input type="checkbox" value="open"> 🟢 Open Now</label>
+            <label class="ms-item"><input type="checkbox" value="closing"> ⚠️ Closing Soon</label>
+            <label class="ms-item"><input type="checkbox" value="lunch"> 🍽 Lunch Break</label>
+            <label class="ms-item"><input type="checkbox" value="not_open"> ⏳ Opening Soon</label>
+            <label class="ms-item"><input type="checkbox" value="closed"> 🔴 Closed</label>
+            <label class="ms-item"><input type="checkbox" value="weekend"> 🗓 Weekend</label>
+          </div>
+          <div class="ms-footer">
+            <span id="bizMsCount">0 selected</span>
+            <button class="ms-clear" onclick="clearMsBiz()">Clear all</button>
+          </div>
+        </div>
+      </div>
+      <div class="ms-chips" id="bizMsChips"></div>
+    </div>
+    <div class="dsec">
+      <div class="dsec-title">Sort By</div>
+      <div class="sort-dropdown-wrap" id="sortDropWrap">
+        <div class="sort-trigger" id="sortTrigger" onclick="toggleSortDrop()">
+          <span class="sort-trigger-label" id="sortTrigLabel">🔤 City Name A – Z</span>
+          <span class="sort-trigger-arrow">▼</span>
+        </div>
+        <div class="sort-dropdown" id="sortDropdown">
+          <div class="sort-opt s-active" data-s="az">🔤 City Name A – Z</div>
+          <div class="sort-opt" data-s="za">🔤 City Name Z – A</div>
+          <div class="sort-opt" data-s="caz">🌍 Country A – Z</div>
+          <div class="sort-opt" data-s="cont">🗺 Continent A – Z</div>
+          <div class="sort-opt" data-s="ua">⬆️ UTC Offset — Early first</div>
+          <div class="sort-opt" data-s="ud">⬇️ UTC Offset — Late first</div>
+          <div class="sort-opt" data-s="ew">🌏 East → West</div>
+          <div class="sort-opt" data-s="we">🌎 West → East</div>
+          <div class="sort-opt" data-s="biz_open">📞 Best Call Time first</div>
+          <div class="sort-opt" data-s="biz_mail">📧 Best Email Time first</div>
+          <div class="sort-opt" data-s="open_first">🟢 Open Markets first</div>
+        </div>
+      </div>
+    </div>
+    <div class="dsec">
+      <div class="dsec-title">Filter by Language</div>
+      <div class="dr-row">
+        <label>Spoken Language</label>
+        <div class="ms-wrap" id="langMsWrap">
+          <div class="ms-trigger" id="langMsTrigger" onclick="toggleMs('lang')">
+            <span class="ms-trigger-label placeholder" id="langMsLabel">Any language…</span>
+            <span class="ms-badge" id="langMsBadge" style="display:none"></span>
+            <span class="ms-trigger-arrow">▼</span>
+          </div>
+          <div class="ms-dropdown" id="langMsDropdown" style="display:none">
+            <div class="ms-search"><input type="text" id="langMsSearch" placeholder="Search languages…" autocomplete="off"></div>
+            <div class="ms-list" id="langMsList"></div>
+            <div class="ms-footer">
+              <span id="langMsCount">0 selected</span>
+              <button class="ms-clear" onclick="clearMsLang()">Clear all</button>
+            </div>
+          </div>
+        </div>
+        <div class="ms-chips" id="langMsChips"></div>
+      </div>
+    </div>
+    <div class="dsec">
+      <div class="dsec-title">Legend</div>
+      <div class="legend-col">
+        <div class="leg2"><div class="legbar" style="background:var(--green)"></div>Ahead of <span id="legendHomeName">IST</span></div>
+        <div class="leg2"><div class="legbar" style="background:var(--saffron)"></div>Same as <span id="legendHomeName2">IST</span></div>
+        <div class="leg2"><div class="legbar" style="background:var(--red)"></div>Behind <span id="legendHomeName3">IST</span></div>
+        <div class="leg2"><div class="legbar" style="background:var(--bluelt);border:1px solid var(--blue)"></div>Best time to call</div>
+        <div class="leg2"><div class="legbar" style="background:var(--purplelt);border:1px solid var(--purple)"></div>Best time to email</div>
+        <div class="leg2"><div class="legbar" style="background:var(--greenlt);border:1px solid var(--green)"></div>Office open</div>
+      </div>
+    </div>
+  </div>
+  <div class="drawer-footer">
+    <button class="dr-reset" onclick="resetFilters()">Reset All</button>
+    <button class="dr-apply" onclick="closeDrawer()">Apply &amp; Close</button>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header class="hdr">
+<div class="hi">
+  <div class="logo-block">
+    <div class="logo-emblem">
+      <svg viewBox="0 0 24 24" fill="none">
+        <circle cx="12" cy="12" r="10" stroke="#F5A045" stroke-width="1.4" opacity=".6"/>
+        <circle cx="12" cy="12" r="2.5" fill="#F5A045" opacity=".75"/>
+        <circle cx="12" cy="12" r="6" stroke="#F5A045" stroke-width=".9" opacity=".3"/>
+        <line x1="12" y1="2" x2="12" y2="22" stroke="#F5A045" stroke-width=".8" opacity=".28"/>
+        <line x1="2" y1="12" x2="22" y2="12" stroke="#F5A045" stroke-width=".8" opacity=".28"/>
+        <line x1="4.93" y1="4.93" x2="19.07" y2="19.07" stroke="#F5A045" stroke-width=".8" opacity=".28"/>
+        <line x1="19.07" y1="4.93" x2="4.93" y2="19.07" stroke="#F5A045" stroke-width=".8" opacity=".28"/>
+      </svg>
+    </div>
+    <div class="logo-text">
+      <div class="logo-main">Exporters Clock</div>
+      <div class="logo-by">by Niryat Kranti</div>
+    </div>
+  </div>
+  <div class="hdr-right">
+    <div class="open-pill">Open <b id="openCount">—</b></div>
+    <div class="ist-compact" id="homeClockBtn" onclick="openHomeModal()" title="Click to change home location">
+      <div class="ist-il"><span id="homeFlagHdr" style="font-size:11px;line-height:1;margin-right:2px">🇮🇳</span><span class="lv"></span><span id="homeTzLabel">IST Live</span></div>
+      <div class="ist-time" id="ist">--:--:--</div>
+      <div class="ist-date" id="isd">—</div>
+      <div class="ist-compact-hint">tap to change ✎</div>
+    </div>
+    <div class="menu-btn" id="menuBtn" onclick="openDrawer()">
+      <span></span><span></span><span></span>
+      <div class="filter-dot" id="filterDot"></div>
+    </div>
+  </div>
+</div>
+</header>
+
+<!-- TABS -->
+<div class="tabs">
+  <div class="tab active" data-tab="clock">🕐 Clock</div>
+  <div class="tab" data-tab="table">📋 Table</div>
+  <div class="tab" data-tab="comp">⚖️ Compare</div>
+  <div class="tab" data-tab="mymarkets">⭐ My Markets</div>
+  <div class="tab" data-tab="calc">🗓 Planner</div>
+  <div class="tab" data-tab="holiday">📅 Holidays</div>
+  <div class="tab" data-tab="tips">💡 Tips</div>
+</div>
+
+<!-- COUNT BAR -->
+<div class="count-bar" id="countBar">
+  <span>Showing <b id="cd">258</b> of <b>258</b> markets &nbsp;<span id="sortLabel" style="font-size:9px;color:var(--muted2)">sorted A–Z</span></span>
+  <div class="active-filters" id="activeFilters"></div>
+</div>
+
+<!-- SCROLL HINT -->
+<div class="scroll-hint" id="scrollHint" onclick="showScrollTop()">
+  <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 15l-6-6-6 6"/></svg>
+  Scroll up · tap ☰ for filters
+</div>
+
+<!-- MAIN -->
+<div class="main" id="mainScroll">
+
+  <!-- CLOCK -->
+  <div id="clockView"><div class="grid" id="grid"></div></div>
+
+  <!-- TABLE -->
+  <div id="tableView" style="display:none">
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr>
+          <th></th><th>City</th><th>Country</th><th>Local Time</th>
+          <th>Date</th><th>Day</th><th>UTC</th><th id="tblVsHdr">vs IST</th><th>Status</th><th>Languages</th>
+        </tr></thead>
+        <tbody id="tblBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- COMPARE (WorldTimeBuddy style) -->
+  <div id="compView" style="display:none">
+    <div class="comp-header">
+      <div class="comp-title">Side-by-Side Comparison</div>
+    </div>
+    <div class="comp-add-panel">
+      <h4>Add market to compare</h4>
+      <div class="comp-search-wrap">
+        <div class="comp-search-box-wrap">
+          <svg class="comp-search-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="compSearchInput" class="comp-search-input" placeholder="Type city or country to search…" autocomplete="off">
+          <button class="comp-add-go" onclick="addCompCity()">+ Add</button>
+        </div>
+        <div class="comp-suggestions" id="compSuggestions"></div>
+        <!-- hidden select still used for value -->
+        <select id="compCitySelect" style="display:none"></select>
+      </div>
+      
+    </div>
+    <div class="comp-instructions">
+      <span class="ci-item"><span class="ci-dot" style="background:rgba(26,107,60,.7)"></span>Green line = current <span id="compHomeLabel">home</span> time</span>
+      <span class="ci-item"><span class="ci-dot" style="background:rgba(26,95,168,.6)"></span>Blue line = drag to compare any hour</span>
+    </div>
+    <div class="comp-legend">
+      <div class="cl-item"><div class="cl-dot" style="background:#dceeff;border:1px solid #9cc"></div>Best call</div>
+      <div class="cl-item"><div class="cl-dot" style="background:#f0e8ff;border:1px solid #c9a"></div>Best email</div>
+      <div class="cl-item"><div class="cl-dot" style="background:#eaf7f0;border:1px solid #9c9"></div>Work hours</div>
+      <div class="cl-item"><div class="cl-dot" style="background:#fff8e0;border:1px solid #cc9"></div>Lunch</div>
+      <div class="cl-item"><div class="cl-dot" style="background:#f0f0f8;border:1px solid #c0c0d8"></div>Weekend</div>
+      <div class="cl-item"><div class="cl-dot" style="background:var(--navy);border:0"></div>Current hour</div>
+    </div>
+    <div class="comp-wrap-outer" id="compWrapOuter">
+      <div class="comp-now-line" id="compNowLine" style="display:none"></div>
+      <div class="comp-seek-line" id="compSeekLine">
+        <div class="comp-seek-label" id="compSeekLabel"></div>
+      </div>
+      <div class="comp-table-wrap" id="compTableWrap">
+        <table class="comp-table" id="compTable"></table>
+      </div>
+    </div>
+  </div>
+
+  <!-- MY MARKETS -->
+  <div id="myMarketsView" style="display:none">
+    <div class="mm-header">
+      <div class="mm-title">⭐ My Markets</div>
+      <div class="mm-actions">
+        <button class="mm-btn" onclick="openModal()">+ New Group</button>
+        <button class="mm-btn secondary" onclick="showTab('clock')">View on Clock</button>
+      </div>
+    </div>
+    <div class="mm-groups" id="mmGroups">
+      <div class="mm-empty">
+        <div>No market groups yet.</div>
+        <div class="mm-empty-hint">Create a group, then star ⭐ any city from the Clock view to add it here. Your groups are saved across sessions.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PLANNER -->
+  <div id="calcView" style="display:none">
+    <div class="panel">
+      <div class="panel-title">Meeting Planner</div>
+      <div class="panel-sub">Plan calls, find overlap windows &amp; calculate shipment arrival dates.</div>
+      <div class="tool-card">
+        <h3>📞 Best Time to Call</h3>
+        <div class="form-row">
+          <div class="fg2"><label>Your <span class="planner-home-label">IST</span> Time</label><input type="time" id="istInput" value="10:00"></div>
+          <div class="fg2"><label>Target Market</label><div class="planner-search-wrap" id="pw-targetCity">
+            <input type="text" class="planner-search-input" id="pi-targetCity" placeholder="Search market…" autocomplete="off">
+            <div class="planner-suggestions" id="ps-targetCity"></div>
+            <select id="targetCity" style="display:none"></select>
+          </div></div>
+        </div>
+        <button class="calc-btn" onclick="calcMeeting()">Check →</button>
+        <div class="result-box" id="meetResult"></div>
+      </div>
+      <div class="tool-card">
+        <h3>🌐 Multi-Market Overlap Finder</h3>
+        <p style="font-size:11px;color:var(--muted);margin-bottom:11px"><span class="planner-home-label">Home</span> slots when 2–3 markets are all open simultaneously.</p>
+        <div class="form-row">
+          <div class="fg2"><label>Market 1</label><div class="planner-search-wrap" id="pw-mw1">
+            <input type="text" class="planner-search-input" id="pi-mw1" placeholder="Search market…" autocomplete="off">
+            <div class="planner-suggestions" id="ps-mw1"></div>
+            <select id="mw1" style="display:none"></select>
+          </div></div>
+          <div class="fg2"><label>Market 2</label><div class="planner-search-wrap" id="pw-mw2">
+            <input type="text" class="planner-search-input" id="pi-mw2" placeholder="Search market…" autocomplete="off">
+            <div class="planner-suggestions" id="ps-mw2"></div>
+            <select id="mw2" style="display:none"></select>
+          </div></div>
+          <div class="fg2"><label>Market 3 (optional)</label><div class="planner-search-wrap" id="pw-mw3">
+            <input type="text" class="planner-search-input" id="pi-mw3" placeholder="Search market (optional)…" autocomplete="off">
+            <div class="planner-suggestions" id="ps-mw3"></div>
+            <select id="mw3" style="display:none"><option value="">— skip —</option></select>
+          </div></div>
+        </div>
+        <button class="calc-btn" onclick="findWindow()">Find Overlap →</button>
+        <div class="result-box" id="windowResult"></div>
+      </div>
+      <div class="tool-card">
+        <h3>🚢 Shipment Arrival Calculator</h3>
+        <p style="font-size:11px;color:var(--muted);margin-bottom:11px">Dispatch date + transit day range → approximate ETA window &amp; business day check.</p>
+        <div class="form-row">
+          <div class="fg2"><label>Dispatch Date</label><input type="date" id="dispDate"></div>
+          <div class="fg2"><label>Transit Days (From)</label><input type="number" id="transitFrom" value="18" min="1" max="180" placeholder="e.g. 18"></div>
+          <div class="fg2"><label>Transit Days (To)</label><input type="number" id="transitTo" value="25" min="1" max="180" placeholder="e.g. 25"></div>
+          <div class="fg2"><label>Destination</label><div class="planner-search-wrap" id="pw-destCity">
+            <input type="text" class="planner-search-input" id="pi-destCity" placeholder="Search destination…" autocomplete="off">
+            <div class="planner-suggestions" id="ps-destCity"></div>
+            <select id="destCity" style="display:none"></select>
+          </div></div>
+        </div>
+        <button class="calc-btn" onclick="calcShipping()">Calculate →</button>
+        <div class="result-box" id="shipResult"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOLIDAYS -->
+  <div id="holidayView" style="display:none">
+    <div class="hol-intro"><b>Why this matters:</b> A shipment or payment arriving during a national holiday in your buyer's country causes delays and demurrage. Check before you book.</div>
+    <div class="hol-grid" id="holGrid"></div>
+  </div>
+
+  <!-- TIPS -->
+  <div id="tipsView" style="display:none">
+    <div class="tips-grid">
+      <div class="tip-card"><div class="tip-tag tag-t">Timing</div><h4>🕐 Golden Hours to Call</h4><ul>
+        <li><b>Middle East (UAE/Saudi/Oman):</b> 10:30–13:00 IST or 15:00–17:30 IST (not Fri)</li>
+        <li><b>Europe (UK/Germany/Italy):</b> 13:30–17:30 IST</li>
+        <li><b>USA East Coast:</b> 18:30–22:00 IST</li>
+        <li><b>USA West Coast:</b> 21:30–01:00 IST</li>
+        <li><b>Southeast Asia:</b> 08:00–11:30 IST</li>
+        <li><b>Japan / Korea:</b> 06:30–09:30 IST</li>
+        <li><b>Australia (Sydney):</b> 05:00–08:30 IST</li>
+      </ul></div>
+      <div class="tip-card"><div class="tip-tag tag-b">Banking</div><h4>🏦 Wire Transfer Cutoffs</h4><ul>
+        <li><b>India SWIFT:</b> Most banks stop by 15:00 IST</li>
+        <li><b>UAE (AED/USD):</b> Initiate before 14:00 IST</li>
+        <li><b>Europe SEPA (EUR):</b> Cutoff ~16:00 IST</li>
+        <li><b>USA Fedwire:</b> Closes 01:30 IST next day</li>
+        <li><b>China CIPS (CNY):</b> Cutoff ~14:30 IST</li>
+        <li>Always add 1 business day buffer</li>
+      </ul></div>
+      <div class="tip-card"><div class="tip-tag tag-h">Holidays</div><h4>📅 Blackout Periods</h4><ul>
+        <li><b>China Golden Week:</b> Oct 1–7 — full shutdown</li>
+        <li><b>China New Year:</b> Jan/Feb — 2–3 week shutdown</li>
+        <li><b>Middle East Ramadan:</b> Shorter hours, slower decisions</li>
+        <li><b>Europe August:</b> Aug 10–25 — buyers on leave</li>
+        <li><b>USA Thanksgiving:</b> Late Nov — logistics slow</li>
+        <li><b>Japan Golden Week:</b> Apr 29–May 5 — complete shutdown</li>
+      </ul></div>
+      <div class="tip-card"><div class="tip-tag tag-c">Communication</div><h4>💬 Email Timing</h4><ul>
+        <li>Target 8–9 AM their local time for best open rates</li>
+        <li><b>Europe buyers:</b> Send at 07:00–08:00 IST</li>
+        <li><b>US East buyers:</b> Send at 18:30–19:30 IST</li>
+        <li><b>Middle East:</b> Send Sun–Thu, avoid Fri–Sat</li>
+        <li><b>ME/Africa:</b> WhatsApp more effective than email</li>
+        <li>Always state IST when proposing call times</li>
+      </ul></div>
+      <div class="tip-card"><div class="tip-tag tag-t">Logistics</div><h4>🚢 Port &amp; Shipping</h4><ul>
+        <li>Shipping lines cutoff: typically 48h before ETD</li>
+        <li>Customs operates Mon–Fri only in most countries</li>
+        <li><b>US ISF filing:</b> 24h before vessel loading</li>
+        <li><b>EU Entry Summary:</b> 24h before arrival</li>
+        <li>Avoid vessels arriving Friday — weekend demurrage risk</li>
+        <li>Avoid Chinese port departures Oct 1–7</li>
+      </ul></div>
+      <div class="tip-card"><div class="tip-tag tag-c">Etiquette</div><h4>🤝 Buyer Time Zone Tips</h4><ul>
+        <li>Always confirm buyer's local time, not just IST</li>
+        <li><b>Germany / Japan:</b> Never be late — even 5 min matters</li>
+        <li><b>Middle East:</b> 15–30 min delay is normal, not rude</li>
+        <li><b>USA:</b> Keep calls under 30 min — they're time-pressed</li>
+        <li>Send meeting agenda 24h before any formal call</li>
+        <li>Avoid scheduling during their lunch hours</li>
+      </ul></div>
+    </div>
+  </div>
+
+</div><!-- .main -->
+</div><!-- .app -->
+<script>
+const C=[{"city":"Algiers","country":"Algeria","flag":"🇩🇿","tz":"Africa/Algiers","continent":"Africa","region":"North Africa","lon":3.05,"langs":"Arabic, Tamazight"},{"city":"Luanda","country":"Angola","flag":"🇦🇴","tz":"Africa/Luanda","continent":"Africa","region":"Central Africa","lon":13.24,"langs":"Portuguese"},{"city":"Cotonou","country":"Benin","flag":"🇧🇯","tz":"Africa/Porto-Novo","continent":"Africa","region":"West Africa","lon":2.42,"langs":"English"},{"city":"Gaborone","country":"Botswana","flag":"🇧🇼","tz":"Africa/Gaborone","continent":"Africa","region":"Southern Africa","lon":25.91,"langs":"English, Tswana"},{"city":"Ouagadougou","country":"Burkina Faso","flag":"🇧🇫","tz":"Africa/Ouagadougou","continent":"Africa","region":"West Africa","lon":-1.52,"langs":"French"},{"city":"Bujumbura","country":"Burundi","flag":"🇧🇮","tz":"Africa/Bujumbura","continent":"Africa","region":"East Africa","lon":29.36,"langs":"Kirundi, French"},{"city":"Yaoundé","country":"Cameroon","flag":"🇨🇲","tz":"Africa/Douala","continent":"Africa","region":"Central Africa","lon":11.52,"langs":"French, English"},{"city":"Praia","country":"Cape Verde","flag":"🇨🇻","tz":"Atlantic/Cape_Verde","continent":"Africa","region":"West Africa","lon":-23.52,"langs":"Portuguese"},{"city":"Bangui","country":"CAR","flag":"🇨🇫","tz":"Africa/Bangui","continent":"Africa","region":"Central Africa","lon":18.56,"langs":"French, Sango"},{"city":"N'Djamena","country":"Chad","flag":"🇹🇩","tz":"Africa/Ndjamena","continent":"Africa","region":"Central Africa","lon":15.05,"langs":"French, Arabic"},{"city":"Moroni","country":"Comoros","flag":"🇰🇲","tz":"Indian/Comoro","continent":"Africa","region":"East Africa","lon":43.27,"langs":"Arabic, French"},{"city":"Brazzaville","country":"Congo","flag":"🇨🇬","tz":"Africa/Brazzaville","continent":"Africa","region":"Central Africa","lon":15.28,"langs":"French"},{"city":"Abidjan","country":"Côte d'Ivoire","flag":"🇨🇮","tz":"Africa/Abidjan","continent":"Africa","region":"West Africa","lon":-4.03,"langs":"English"},{"city":"Djibouti City","country":"Djibouti","flag":"🇩🇯","tz":"Africa/Djibouti","continent":"Africa","region":"East Africa","lon":43.15,"langs":"Arabic, French"},{"city":"Kinshasa","country":"DR Congo","flag":"🇨🇩","tz":"Africa/Kinshasa","continent":"Africa","region":"Central Africa","lon":15.32,"langs":"French"},{"city":"Cairo","country":"Egypt","flag":"🇪🇬","tz":"Africa/Cairo","continent":"Africa","region":"North Africa","lon":31.24,"langs":"Arabic"},{"city":"Malabo","country":"Eq. Guinea","flag":"🇬🇶","tz":"Africa/Malabo","continent":"Africa","region":"Central Africa","lon":8.78,"langs":"English"},{"city":"Asmara","country":"Eritrea","flag":"🇪🇷","tz":"Africa/Asmara","continent":"Africa","region":"East Africa","lon":38.93,"langs":"Tigrinya, Arabic"},{"city":"Mbabane","country":"Eswatini","flag":"🇸🇿","tz":"Africa/Mbabane","continent":"Africa","region":"Southern Africa","lon":31.13,"langs":"Swati, English"},{"city":"Addis Ababa","country":"Ethiopia","flag":"🇪🇹","tz":"Africa/Addis_Ababa","continent":"Africa","region":"East Africa","lon":38.75,"langs":"Amharic"},{"city":"Libreville","country":"Gabon","flag":"🇬🇦","tz":"Africa/Libreville","continent":"Africa","region":"Central Africa","lon":9.45,"langs":"French"},{"city":"Banjul","country":"Gambia","flag":"🇬🇲","tz":"Africa/Banjul","continent":"Africa","region":"West Africa","lon":-16.58,"langs":"English"},{"city":"Accra","country":"Ghana","flag":"🇬🇭","tz":"Africa/Accra","continent":"Africa","region":"West Africa","lon":-0.19,"langs":"English"},{"city":"Conakry","country":"Guinea","flag":"🇬🇳","tz":"Africa/Conakry","continent":"Africa","region":"West Africa","lon":-13.71,"langs":"French"},{"city":"Bissau","country":"Guinea-Bissau","flag":"🇬🇼","tz":"Africa/Bissau","continent":"Africa","region":"West Africa","lon":-15.58,"langs":"Portuguese"},{"city":"Nairobi","country":"Kenya","flag":"🇰🇪","tz":"Africa/Nairobi","continent":"Africa","region":"East Africa","lon":36.82,"langs":"Swahili, English"},{"city":"Maseru","country":"Lesotho","flag":"🇱🇸","tz":"Africa/Maseru","continent":"Africa","region":"Southern Africa","lon":27.49,"langs":"Sesotho, English"},{"city":"Monrovia","country":"Liberia","flag":"🇱🇷","tz":"Africa/Monrovia","continent":"Africa","region":"West Africa","lon":-10.8,"langs":"English"},{"city":"Tripoli","country":"Libya","flag":"🇱🇾","tz":"Africa/Tripoli","continent":"Africa","region":"North Africa","lon":13.18,"langs":"Arabic"},{"city":"Antananarivo","country":"Madagascar","flag":"🇲🇬","tz":"Indian/Antananarivo","continent":"Africa","region":"East Africa","lon":47.52,"langs":"Malagasy, French"},{"city":"Lilongwe","country":"Malawi","flag":"🇲🇼","tz":"Africa/Blantyre","continent":"Africa","region":"East Africa","lon":33.77,"langs":"English, Chichewa"},{"city":"Bamako","country":"Mali","flag":"🇲🇱","tz":"Africa/Bamako","continent":"Africa","region":"West Africa","lon":-8,"langs":"French"},{"city":"Nouakchott","country":"Mauritania","flag":"🇲🇷","tz":"Africa/Nouakchott","continent":"Africa","region":"West Africa","lon":-15.97,"langs":"Arabic"},{"city":"Port Louis","country":"Mauritius","flag":"🇲🇺","tz":"Indian/Mauritius","continent":"Africa","region":"East Africa","lon":57.5,"langs":"English, French, Creole"},{"city":"Casablanca","country":"Morocco","flag":"🇲🇦","tz":"Africa/Casablanca","continent":"Africa","region":"North Africa","lon":-7.59,"langs":"Arabic, Tamazight, French"},{"city":"Maputo","country":"Mozambique","flag":"🇲🇿","tz":"Africa/Maputo","continent":"Africa","region":"Southern Africa","lon":32.58,"langs":"Portuguese"},{"city":"Windhoek","country":"Namibia","flag":"🇳🇦","tz":"Africa/Windhoek","continent":"Africa","region":"Southern Africa","lon":17.08,"langs":"English, Afrikaans"},{"city":"Niamey","country":"Niger","flag":"🇳🇪","tz":"Africa/Niamey","continent":"Africa","region":"West Africa","lon":2.12,"langs":"French"},{"city":"Abuja","country":"Nigeria","flag":"🇳🇬","tz":"Africa/Lagos","continent":"Africa","region":"West Africa","lon":7.49,"langs":"English, Hausa, Yoruba, Igbo"},{"city":"Saint-Denis","country":"Réunion","flag":"🇷🇪","tz":"Indian/Reunion","continent":"Africa","region":"East Africa","lon":55.45,"langs":"French, Creole"},{"city":"Kigali","country":"Rwanda","flag":"🇷🇼","tz":"Africa/Kigali","continent":"Africa","region":"East Africa","lon":30.06,"langs":"Kinyarwanda, French, English"},{"city":"São Tomé","country":"São Tomé","flag":"🇸🇹","tz":"Africa/Sao_Tome","continent":"Africa","region":"Central Africa","lon":6.73,"langs":"English"},{"city":"Dakar","country":"Senegal","flag":"🇸🇳","tz":"Africa/Dakar","continent":"Africa","region":"West Africa","lon":-17.45,"langs":"French, Wolof"},{"city":"Victoria","country":"Seychelles","flag":"🇸🇨","tz":"Indian/Mahe","continent":"Africa","region":"East Africa","lon":55.45,"langs":"Creole, English, French"},{"city":"Freetown","country":"Sierra Leone","flag":"🇸🇱","tz":"Africa/Freetown","continent":"Africa","region":"West Africa","lon":-13.23,"langs":"English"},{"city":"Mogadishu","country":"Somalia","flag":"🇸🇴","tz":"Africa/Mogadishu","continent":"Africa","region":"East Africa","lon":45.34,"langs":"Somali, Arabic"},{"city":"Johannesburg","country":"South Africa","flag":"🇿🇦","tz":"Africa/Johannesburg","continent":"Africa","region":"Southern Africa","lon":28.04,"langs":"Zulu, Xhosa, Afrikaans, English + 8 more"},{"city":"Juba","country":"South Sudan","flag":"🇸🇸","tz":"Africa/Juba","continent":"Africa","region":"East Africa","lon":31.58,"langs":"English, Arabic"},{"city":"Khartoum","country":"Sudan","flag":"🇸🇩","tz":"Africa/Khartoum","continent":"Africa","region":"North Africa","lon":32.53,"langs":"Arabic, English"},{"city":"Dar es Salaam","country":"Tanzania","flag":"🇹🇿","tz":"Africa/Dar_es_Salaam","continent":"Africa","region":"East Africa","lon":39.28,"langs":"Swahili, English"},{"city":"Lome","country":"Togo","flag":"🇹🇬","tz":"Africa/Lome","continent":"Africa","region":"West Africa","lon":1.22,"langs":"French"},{"city":"Tunis","country":"Tunisia","flag":"🇹🇳","tz":"Africa/Tunis","continent":"Africa","region":"North Africa","lon":10.17,"langs":"Arabic, French"},{"city":"Kampala","country":"Uganda","flag":"🇺🇬","tz":"Africa/Kampala","continent":"Africa","region":"East Africa","lon":32.58,"langs":"English, Swahili"},{"city":"Lusaka","country":"Zambia","flag":"🇿🇲","tz":"Africa/Lusaka","continent":"Africa","region":"Southern Africa","lon":28.28,"langs":"English"},{"city":"Harare","country":"Zimbabwe","flag":"🇿🇼","tz":"Africa/Harare","continent":"Africa","region":"Southern Africa","lon":31.05,"langs":"English, Shona, Ndebele"},{"city":"Kabul","country":"Afghanistan","flag":"🇦🇫","tz":"Asia/Kabul","continent":"Asia","region":"South Asia","lon":69.17,"langs":"English"},{"city":"Yerevan","country":"Armenia","flag":"🇦🇲","tz":"Asia/Yerevan","continent":"Asia","region":"Middle East","lon":44.5,"langs":"Armenian"},{"city":"Baku","country":"Azerbaijan","flag":"🇦🇿","tz":"Asia/Baku","continent":"Asia","region":"Middle East","lon":49.87,"langs":"Azerbaijani"},{"city":"Manama","country":"Bahrain","flag":"🇧🇭","tz":"Asia/Bahrain","continent":"Asia","region":"Middle East","lon":50.58,"langs":"Arabic"},{"city":"Dhaka","country":"Bangladesh","flag":"🇧🇩","tz":"Asia/Dhaka","continent":"Asia","region":"South Asia","lon":90.41,"langs":"Bengali"},{"city":"Thimphu","country":"Bhutan","flag":"🇧🇹","tz":"Asia/Thimphu","continent":"Asia","region":"South Asia","lon":89.64,"langs":"English"},{"city":"Bandar Seri Begawan","country":"Brunei","flag":"🇧🇳","tz":"Asia/Brunei","continent":"Asia","region":"Southeast Asia","lon":114.94,"langs":"Malay, English"},{"city":"Phnom Penh","country":"Cambodia","flag":"🇰🇭","tz":"Asia/Phnom_Penh","continent":"Asia","region":"Southeast Asia","lon":104.91,"langs":"Khmer"},{"city":"Beijing","country":"China","flag":"🇨🇳","tz":"Asia/Shanghai","continent":"Asia","region":"East Asia","lon":116.4,"langs":"Mandarin"},{"city":"Nicosia","country":"Cyprus","flag":"🇨🇾","tz":"Asia/Nicosia","continent":"Asia","region":"Middle East","lon":33.37,"langs":"Greek, Turkish"},{"city":"Tbilisi","country":"Georgia","flag":"🇬🇪","tz":"Asia/Tbilisi","continent":"Asia","region":"Middle East","lon":44.83,"langs":"Georgian"},{"city":"Hong Kong","country":"Hong Kong","flag":"🇭🇰","tz":"Asia/Hong_Kong","continent":"Asia","region":"East Asia","lon":114.17,"langs":"Cantonese, English"},{"city":"New Delhi","country":"India","flag":"🇮🇳","tz":"Asia/Kolkata","continent":"Asia","region":"South Asia","lon":77.21,"langs":"Hindi, English + 22 official languages"},{"city":"Bali (Denpasar)","country":"Indonesia","flag":"🇮🇩","tz":"Asia/Makassar","continent":"Asia","region":"Southeast Asia","lon":115.21,"langs":"Indonesian (Bahasa)"},{"city":"Jakarta","country":"Indonesia","flag":"🇮🇩","tz":"Asia/Jakarta","continent":"Asia","region":"Southeast Asia","lon":106.82,"langs":"Indonesian (Bahasa)"},{"city":"Jayapura","country":"Indonesia","flag":"🇮🇩","tz":"Asia/Jayapura","continent":"Asia","region":"Southeast Asia","lon":140.7,"langs":"Indonesian (Bahasa)"},{"city":"Tehran","country":"Iran","flag":"🇮🇷","tz":"Asia/Tehran","continent":"Asia","region":"Middle East","lon":51.42,"langs":"Persian (Farsi)"},{"city":"Baghdad","country":"Iraq","flag":"🇮🇶","tz":"Asia/Baghdad","continent":"Asia","region":"Middle East","lon":44.44,"langs":"Arabic, Kurdish"},{"city":"Jerusalem","country":"Israel","flag":"🇮🇱","tz":"Asia/Jerusalem","continent":"Asia","region":"Middle East","lon":35.22,"langs":"Hebrew, Arabic"},{"city":"Tokyo","country":"Japan","flag":"🇯🇵","tz":"Asia/Tokyo","continent":"Asia","region":"East Asia","lon":139.69,"langs":"Japanese"},{"city":"Amman","country":"Jordan","flag":"🇯🇴","tz":"Asia/Amman","continent":"Asia","region":"Middle East","lon":35.93,"langs":"Arabic"},{"city":"Almaty","country":"Kazakhstan","flag":"🇰🇿","tz":"Asia/Almaty","continent":"Asia","region":"Central Asia","lon":76.94,"langs":"Kazakh, Russian"},{"city":"Kuwait City","country":"Kuwait","flag":"🇰🇼","tz":"Asia/Kuwait","continent":"Asia","region":"Middle East","lon":47.98,"langs":"Arabic"},{"city":"Bishkek","country":"Kyrgyzstan","flag":"🇰🇬","tz":"Asia/Bishkek","continent":"Asia","region":"Central Asia","lon":74.59,"langs":"Kyrgyz, Russian"},{"city":"Vientiane","country":"Laos","flag":"🇱🇦","tz":"Asia/Vientiane","continent":"Asia","region":"Southeast Asia","lon":102.6,"langs":"Lao"},{"city":"Beirut","country":"Lebanon","flag":"🇱🇧","tz":"Asia/Beirut","continent":"Asia","region":"Middle East","lon":35.5,"langs":"Arabic, French"},{"city":"Macau","country":"Macau","flag":"🇲🇴","tz":"Asia/Macau","continent":"Asia","region":"East Asia","lon":113.54,"langs":"Cantonese, Portuguese"},{"city":"Kuala Lumpur","country":"Malaysia","flag":"🇲🇾","tz":"Asia/Kuala_Lumpur","continent":"Asia","region":"Southeast Asia","lon":101.69,"langs":"Malay, English"},{"city":"Malé","country":"Maldives","flag":"🇲🇻","tz":"Indian/Maldives","continent":"Asia","region":"South Asia","lon":73.51,"langs":"Dhivehi"},{"city":"Ulaanbaatar","country":"Mongolia","flag":"🇲🇳","tz":"Asia/Ulaanbaatar","continent":"Asia","region":"East Asia","lon":106.92,"langs":"Mongolian"},{"city":"Yangon","country":"Myanmar","flag":"🇲🇲","tz":"Asia/Rangoon","continent":"Asia","region":"Southeast Asia","lon":96.15,"langs":"Burmese"},{"city":"Kathmandu","country":"Nepal","flag":"🇳🇵","tz":"Asia/Kathmandu","continent":"Asia","region":"South Asia","lon":85.32,"langs":"Nepali"},{"city":"Muscat","country":"Oman","flag":"🇴🇲","tz":"Asia/Muscat","continent":"Asia","region":"Middle East","lon":58.59,"langs":"Arabic"},{"city":"Islamabad","country":"Pakistan","flag":"🇵🇰","tz":"Asia/Karachi","continent":"Asia","region":"South Asia","lon":73.04,"langs":"Urdu, English"},{"city":"Manila","country":"Philippines","flag":"🇵🇭","tz":"Asia/Manila","continent":"Asia","region":"Southeast Asia","lon":120.98,"langs":"Filipino, English"},{"city":"Doha","country":"Qatar","flag":"🇶🇦","tz":"Asia/Qatar","continent":"Asia","region":"Middle East","lon":51.53,"langs":"Arabic"},{"city":"Chita","country":"Russia","flag":"🇷🇺","tz":"Asia/Chita","continent":"Asia","region":"Central Asia","lon":113.49,"langs":"Russian"},{"city":"Irkutsk","country":"Russia","flag":"🇷🇺","tz":"Asia/Irkutsk","continent":"Asia","region":"Central Asia","lon":104.28,"langs":"Russian"},{"city":"Vladivostok","country":"Russia","flag":"🇷🇺","tz":"Asia/Vladivostok","continent":"Asia","region":"East Asia","lon":131.87,"langs":"Russian"},{"city":"Krasnoyarsk","country":"Russia","flag":"🇷🇺","tz":"Asia/Krasnoyarsk","continent":"Asia","region":"Central Asia","lon":92.79,"langs":"Russian"},{"city":"Magadan","country":"Russia","flag":"🇷🇺","tz":"Asia/Magadan","continent":"Asia","region":"East Asia","lon":150.8,"langs":"Russian"},{"city":"Novosibirsk","country":"Russia","flag":"🇷🇺","tz":"Asia/Novosibirsk","continent":"Asia","region":"Central Asia","lon":82.93,"langs":"Russian"},{"city":"Omsk","country":"Russia","flag":"🇷🇺","tz":"Asia/Omsk","continent":"Asia","region":"Central Asia","lon":73.37,"langs":"Russian"},{"city":"Petropavlovsk-Kamchatsky","country":"Russia","flag":"🇷🇺","tz":"Asia/Kamchatka","continent":"Asia","region":"East Asia","lon":158.65,"langs":"Russian"},{"city":"Sakhalin","country":"Russia","flag":"🇷🇺","tz":"Asia/Sakhalin","continent":"Asia","region":"East Asia","lon":142.74,"langs":"Russian"},{"city":"Yakutsk","country":"Russia","flag":"🇷🇺","tz":"Asia/Yakutsk","continent":"Asia","region":"East Asia","lon":129.73,"langs":"Russian"},{"city":"Riyadh","country":"Saudi Arabia","flag":"🇸🇦","tz":"Asia/Riyadh","continent":"Asia","region":"Middle East","lon":46.72,"langs":"Arabic"},{"city":"Singapore","country":"Singapore","flag":"🇸🇬","tz":"Asia/Singapore","continent":"Asia","region":"Southeast Asia","lon":103.82,"langs":"English, Mandarin, Malay, Tamil"},{"city":"Seoul","country":"South Korea","flag":"🇰🇷","tz":"Asia/Seoul","continent":"Asia","region":"East Asia","lon":126.97,"langs":"English"},{"city":"Colombo","country":"Sri Lanka","flag":"🇱🇰","tz":"Asia/Colombo","continent":"Asia","region":"South Asia","lon":79.86,"langs":"Sinhala, Tamil"},{"city":"Damascus","country":"Syria","flag":"🇸🇾","tz":"Asia/Damascus","continent":"Asia","region":"Middle East","lon":36.29,"langs":"Arabic"},{"city":"Taipei","country":"Taiwan","flag":"🇹🇼","tz":"Asia/Taipei","continent":"Asia","region":"East Asia","lon":121.56,"langs":"Mandarin"},{"city":"Dushanbe","country":"Tajikistan","flag":"🇹🇯","tz":"Asia/Dushanbe","continent":"Asia","region":"Central Asia","lon":68.77,"langs":"Tajik, Russian"},{"city":"Bangkok","country":"Thailand","flag":"🇹🇭","tz":"Asia/Bangkok","continent":"Asia","region":"Southeast Asia","lon":100.52,"langs":"Thai"},{"city":"Dili","country":"Timor-Leste","flag":"🇹🇱","tz":"Asia/Dili","continent":"Asia","region":"Southeast Asia","lon":125.57,"langs":"Tetum, Portuguese"},{"city":"Ashgabat","country":"Turkmenistan","flag":"🇹🇲","tz":"Asia/Ashgabat","continent":"Asia","region":"Central Asia","lon":58.38,"langs":"Turkmen"},{"city":"Dubai","country":"UAE","flag":"🇦🇪","tz":"Asia/Dubai","continent":"Asia","region":"Middle East","lon":55.3,"langs":"Arabic, English"},{"city":"Tashkent","country":"Uzbekistan","flag":"🇺🇿","tz":"Asia/Tashkent","continent":"Asia","region":"Central Asia","lon":69.29,"langs":"Uzbek"},{"city":"Hanoi","country":"Vietnam","flag":"🇻🇳","tz":"Asia/Ho_Chi_Minh","continent":"Asia","region":"Southeast Asia","lon":105.83,"langs":"Vietnamese"},{"city":"Sanaa","country":"Yemen","flag":"🇾🇪","tz":"Asia/Aden","continent":"Asia","region":"Middle East","lon":44.2,"langs":"Arabic"},{"city":"Tirana","country":"Albania","flag":"🇦🇱","tz":"Europe/Tirane","continent":"Europe","region":"Eastern Europe","lon":19.82,"langs":"English"},{"city":"Andorra la Vella","country":"Andorra","flag":"🇦🇩","tz":"Europe/Andorra","continent":"Europe","region":"Western Europe","lon":1.52,"langs":"English"},{"city":"Vienna","country":"Austria","flag":"🇦🇹","tz":"Europe/Vienna","continent":"Europe","region":"Western Europe","lon":16.37,"langs":"German"},{"city":"Ponta Delgada","country":"Azores","flag":"🇵🇹","tz":"Atlantic/Azores","continent":"Europe","region":"Atlantic Islands","lon":-25.67,"langs":"Portuguese"},{"city":"Minsk","country":"Belarus","flag":"🇧🇾","tz":"Europe/Minsk","continent":"Europe","region":"Eastern Europe","lon":27.56,"langs":"English"},{"city":"Brussels","country":"Belgium","flag":"🇧🇪","tz":"Europe/Brussels","continent":"Europe","region":"Western Europe","lon":4.35,"langs":"Dutch, French, German"},{"city":"Sarajevo","country":"Bosnia","flag":"🇧🇦","tz":"Europe/Sarajevo","continent":"Europe","region":"Eastern Europe","lon":18.41,"langs":"Bosnian, Serbian, Croatian"},{"city":"Sofia","country":"Bulgaria","flag":"🇧🇬","tz":"Europe/Sofia","continent":"Europe","region":"Eastern Europe","lon":23.32,"langs":"Bulgarian"},{"city":"Las Palmas","country":"Canary Is.","flag":"🇪🇸","tz":"Atlantic/Canary","continent":"Europe","region":"Atlantic Islands","lon":-15.41,"langs":"Spanish"},{"city":"Zagreb","country":"Croatia","flag":"🇭🇷","tz":"Europe/Zagreb","continent":"Europe","region":"Eastern Europe","lon":15.97,"langs":"Croatian"},{"city":"Prague","country":"Czech Republic","flag":"🇨🇿","tz":"Europe/Prague","continent":"Europe","region":"Eastern Europe","lon":14.42,"langs":"Czech"},{"city":"Copenhagen","country":"Denmark","flag":"🇩🇰","tz":"Europe/Copenhagen","continent":"Europe","region":"Northern Europe","lon":12.56,"langs":"Danish"},{"city":"Tallinn","country":"Estonia","flag":"🇪🇪","tz":"Europe/Tallinn","continent":"Europe","region":"Northern Europe","lon":24.75,"langs":"Estonian"},{"city":"Torshavn","country":"Faroe Is.","flag":"🇫🇴","tz":"Atlantic/Faroe","continent":"Europe","region":"Northern Europe","lon":-6.77,"langs":"Faroese, Danish"},{"city":"Helsinki","country":"Finland","flag":"🇫🇮","tz":"Europe/Helsinki","continent":"Europe","region":"Northern Europe","lon":25,"langs":"Finnish, Swedish"},{"city":"Paris","country":"France","flag":"🇫🇷","tz":"Europe/Paris","continent":"Europe","region":"Western Europe","lon":2.35,"langs":"French"},{"city":"Berlin","country":"Germany","flag":"🇩🇪","tz":"Europe/Berlin","continent":"Europe","region":"Western Europe","lon":13.4,"langs":"German"},{"city":"Athens","country":"Greece","flag":"🇬🇷","tz":"Europe/Athens","continent":"Europe","region":"Southern Europe","lon":23.73,"langs":"Greek"},{"city":"Budapest","country":"Hungary","flag":"🇭🇺","tz":"Europe/Budapest","continent":"Europe","region":"Eastern Europe","lon":19.04,"langs":"Hungarian"},{"city":"Reykjavik","country":"Iceland","flag":"🇮🇸","tz":"Atlantic/Reykjavik","continent":"Europe","region":"Northern Europe","lon":-22,"langs":"Icelandic"},{"city":"Dublin","country":"Ireland","flag":"🇮🇪","tz":"Europe/Dublin","continent":"Europe","region":"Western Europe","lon":-6.27,"langs":"English, Irish"},{"city":"Rome","country":"Italy","flag":"🇮🇹","tz":"Europe/Rome","continent":"Europe","region":"Western Europe","lon":12.49,"langs":"Italian"},{"city":"Pristina","country":"Kosovo","flag":"🇽🇰","tz":"Europe/Belgrade","continent":"Europe","region":"Eastern Europe","lon":21.17,"langs":"Albanian, Serbian"},{"city":"Riga","country":"Latvia","flag":"🇱🇻","tz":"Europe/Riga","continent":"Europe","region":"Northern Europe","lon":24.11,"langs":"Latvian"},{"city":"Vaduz","country":"Liechtenstein","flag":"🇱🇮","tz":"Europe/Vaduz","continent":"Europe","region":"Western Europe","lon":9.52,"langs":"English"},{"city":"Vilnius","country":"Lithuania","flag":"🇱🇹","tz":"Europe/Vilnius","continent":"Europe","region":"Northern Europe","lon":25.28,"langs":"Lithuanian"},{"city":"Luxembourg City","country":"Luxembourg","flag":"🇱🇺","tz":"Europe/Luxembourg","continent":"Europe","region":"Western Europe","lon":6.13,"langs":"Luxembourgish, French, German"},{"city":"Funchal","country":"Madeira","flag":"🇵🇹","tz":"Atlantic/Madeira","continent":"Europe","region":"Atlantic Islands","lon":-16.91,"langs":"Portuguese"},{"city":"Valletta","country":"Malta","flag":"🇲🇹","tz":"Europe/Malta","continent":"Europe","region":"Western Europe","lon":14.51,"langs":"Maltese, English"},{"city":"Chisinau","country":"Moldova","flag":"🇲🇩","tz":"Europe/Chisinau","continent":"Europe","region":"Eastern Europe","lon":28.86,"langs":"Romanian"},{"city":"Monaco","country":"Monaco","flag":"🇲🇨","tz":"Europe/Monaco","continent":"Europe","region":"Western Europe","lon":7.42,"langs":"French"},{"city":"Podgorica","country":"Montenegro","flag":"🇲🇪","tz":"Europe/Podgorica","continent":"Europe","region":"Eastern Europe","lon":19.26,"langs":"Montenegrin"},{"city":"Amsterdam","country":"Netherlands","flag":"🇳🇱","tz":"Europe/Amsterdam","continent":"Europe","region":"Western Europe","lon":4.9,"langs":"Dutch"},{"city":"Skopje","country":"North Macedonia","flag":"🇲🇰","tz":"Europe/Skopje","continent":"Europe","region":"Eastern Europe","lon":21.43,"langs":"Macedonian"},{"city":"Oslo","country":"Norway","flag":"🇳🇴","tz":"Europe/Oslo","continent":"Europe","region":"Northern Europe","lon":10.75,"langs":"Norwegian"},{"city":"Warsaw","country":"Poland","flag":"🇵🇱","tz":"Europe/Warsaw","continent":"Europe","region":"Eastern Europe","lon":21.01,"langs":"Polish"},{"city":"Lisbon","country":"Portugal","flag":"🇵🇹","tz":"Europe/Lisbon","continent":"Europe","region":"Western Europe","lon":-9.14,"langs":"Portuguese"},{"city":"Bucharest","country":"Romania","flag":"🇷🇴","tz":"Europe/Bucharest","continent":"Europe","region":"Eastern Europe","lon":26.1,"langs":"Romanian"},{"city":"Yekaterinburg","country":"Russia","flag":"🇷🇺","tz":"Asia/Yekaterinburg","continent":"Europe","region":"Eastern Europe","lon":60.6,"langs":"Russian"},{"city":"Moscow","country":"Russia","flag":"🇷🇺","tz":"Europe/Moscow","continent":"Europe","region":"Eastern Europe","lon":37.61,"langs":"Russian"},{"city":"Samara","country":"Russia","flag":"🇷🇺","tz":"Europe/Samara","continent":"Europe","region":"Eastern Europe","lon":50.15,"langs":"Russian"},{"city":"San Marino","country":"San Marino","flag":"🇸🇲","tz":"Europe/San_Marino","continent":"Europe","region":"Western Europe","lon":12.44,"langs":"English"},{"city":"Belgrade","country":"Serbia","flag":"🇷🇸","tz":"Europe/Belgrade","continent":"Europe","region":"Eastern Europe","lon":20.46,"langs":"Serbian"},{"city":"Bratislava","country":"Slovakia","flag":"🇸🇰","tz":"Europe/Bratislava","continent":"Europe","region":"Eastern Europe","lon":17.11,"langs":"Slovak"},{"city":"Ljubljana","country":"Slovenia","flag":"🇸🇮","tz":"Europe/Ljubljana","continent":"Europe","region":"Eastern Europe","lon":14.51,"langs":"Slovenian"},{"city":"Madrid","country":"Spain","flag":"🇪🇸","tz":"Europe/Madrid","continent":"Europe","region":"Western Europe","lon":-3.7,"langs":"Spanish, Catalan"},{"city":"Longyearbyen","country":"Svalbard","flag":"🇸🇯","tz":"Arctic/Longyearbyen","continent":"Europe","region":"Northern Europe","lon":15.63,"langs":"Norwegian"},{"city":"Stockholm","country":"Sweden","flag":"🇸🇪","tz":"Europe/Stockholm","continent":"Europe","region":"Northern Europe","lon":18.07,"langs":"Swedish"},{"city":"Bern","country":"Switzerland","flag":"🇨🇭","tz":"Europe/Zurich","continent":"Europe","region":"Western Europe","lon":7.45,"langs":"German, French, Italian"},{"city":"Istanbul","country":"Turkey","flag":"🇹🇷","tz":"Europe/Istanbul","continent":"Europe","region":"Southern Europe","lon":28.98,"langs":"Turkish"},{"city":"London","country":"UK","flag":"🇬🇧","tz":"Europe/London","continent":"Europe","region":"Western Europe","lon":-0.12,"langs":"English"},{"city":"Kyiv","country":"Ukraine","flag":"🇺🇦","tz":"Europe/Kiev","continent":"Europe","region":"Eastern Europe","lon":30.52,"langs":"Ukrainian"},{"city":"Vatican City","country":"Vatican","flag":"🇻🇦","tz":"Europe/Vatican","continent":"Europe","region":"Western Europe","lon":12.45,"langs":"English"},{"city":"Oranjestad","country":"Aruba","flag":"🇦🇼","tz":"America/Aruba","continent":"North America","region":"Caribbean","lon":-70.03,"langs":"Papiamentu, Dutch"},{"city":"Nassau","country":"Bahamas","flag":"🇧🇸","tz":"America/Nassau","continent":"North America","region":"Caribbean","lon":-77.35,"langs":"English"},{"city":"Bridgetown","country":"Barbados","flag":"🇧🇧","tz":"America/Barbados","continent":"North America","region":"Caribbean","lon":-59.62,"langs":"English"},{"city":"Belmopan","country":"Belize","flag":"🇧🇿","tz":"America/Belize","continent":"North America","region":"Central America","lon":-88.77,"langs":"English, Spanish"},{"city":"Calgary","country":"Canada","flag":"🇨🇦","tz":"America/Edmonton","continent":"North America","region":"Canada West","lon":-114.07,"langs":"English, French"},{"city":"Halifax","country":"Canada","flag":"🇨🇦","tz":"America/Halifax","continent":"North America","region":"Canada East","lon":-63.57,"langs":"English, French"},{"city":"Ottawa","country":"Canada","flag":"🇨🇦","tz":"America/Toronto","continent":"North America","region":"Canada East","lon":-75.7,"langs":"English, French"},{"city":"St. John's NL","country":"Canada","flag":"🇨🇦","tz":"America/St_Johns","continent":"North America","region":"Canada East","lon":-52.71,"langs":"English, French"},{"city":"Vancouver","country":"Canada","flag":"🇨🇦","tz":"America/Vancouver","continent":"North America","region":"Canada West","lon":-123.12,"langs":"English, French"},{"city":"Whitehorse","country":"Canada","flag":"🇨🇦","tz":"America/Whitehorse","continent":"North America","region":"Canada West","lon":-135.05,"langs":"English, French"},{"city":"Winnipeg","country":"Canada","flag":"🇨🇦","tz":"America/Winnipeg","continent":"North America","region":"Canada Central","lon":-97.14,"langs":"English, French"},{"city":"San José","country":"Costa Rica","flag":"🇨🇷","tz":"America/Costa_Rica","continent":"North America","region":"Central America","lon":-84.09,"langs":"Spanish"},{"city":"Havana","country":"Cuba","flag":"🇨🇺","tz":"America/Havana","continent":"North America","region":"Caribbean","lon":-82.36,"langs":"Spanish"},{"city":"Willemstad","country":"Curaçao","flag":"🇨🇼","tz":"America/Curacao","continent":"North America","region":"Caribbean","lon":-68.92,"langs":"Papiamentu, Dutch, English"},{"city":"Santo Domingo","country":"Dom. Republic","flag":"🇩🇴","tz":"America/Santo_Domingo","continent":"North America","region":"Caribbean","lon":-69.9,"langs":"Spanish"},{"city":"San Salvador","country":"El Salvador","flag":"🇸🇻","tz":"America/El_Salvador","continent":"North America","region":"Central America","lon":-89.19,"langs":"Spanish"},{"city":"Nuuk","country":"Greenland","flag":"🇬🇱","tz":"America/Godthab","continent":"North America","region":"Arctic","lon":-51.74,"langs":"Greenlandic, Danish"},{"city":"St. George's","country":"Grenada","flag":"🇬🇩","tz":"America/Grenada","continent":"North America","region":"Caribbean","lon":-61.75,"langs":"English"},{"city":"Pointe-à-Pitre","country":"Guadeloupe","flag":"🇬🇵","tz":"America/Guadeloupe","continent":"North America","region":"Caribbean","lon":-61.54,"langs":"French, Creole"},{"city":"Guatemala City","country":"Guatemala","flag":"🇬🇹","tz":"America/Guatemala","continent":"North America","region":"Central America","lon":-90.52,"langs":"Spanish"},{"city":"Port-au-Prince","country":"Haiti","flag":"🇭🇹","tz":"America/Port-au-Prince","continent":"North America","region":"Caribbean","lon":-72.34,"langs":"French, Haitian Creole"},{"city":"Tegucigalpa","country":"Honduras","flag":"🇭🇳","tz":"America/Tegucigalpa","continent":"North America","region":"Central America","lon":-87.22,"langs":"Spanish"},{"city":"Kingston","country":"Jamaica","flag":"🇯🇲","tz":"America/Jamaica","continent":"North America","region":"Caribbean","lon":-76.79,"langs":"English"},{"city":"Fort-de-France","country":"Martinique","flag":"🇲🇶","tz":"America/Martinique","continent":"North America","region":"Caribbean","lon":-61.07,"langs":"French, Creole"},{"city":"Cancún","country":"Mexico","flag":"🇲🇽","tz":"America/Cancun","continent":"North America","region":"Central America","lon":-86.85,"langs":"Spanish"},{"city":"Mexico City","country":"Mexico","flag":"🇲🇽","tz":"America/Mexico_City","continent":"North America","region":"Central America","lon":-99.13,"langs":"Spanish"},{"city":"Monterrey","country":"Mexico","flag":"🇲🇽","tz":"America/Monterrey","continent":"North America","region":"Central America","lon":-100.32,"langs":"Spanish"},{"city":"Tijuana","country":"Mexico","flag":"🇲🇽","tz":"America/Tijuana","continent":"North America","region":"Central America","lon":-117.04,"langs":"Spanish"},{"city":"Managua","country":"Nicaragua","flag":"🇳🇮","tz":"America/Managua","continent":"North America","region":"Central America","lon":-86.29,"langs":"Spanish"},{"city":"Panama City","country":"Panama","flag":"🇵🇦","tz":"America/Panama","continent":"North America","region":"Central America","lon":-79.52,"langs":"Spanish"},{"city":"San Juan","country":"Puerto Rico","flag":"🇵🇷","tz":"America/Puerto_Rico","continent":"North America","region":"Caribbean","lon":-66.11,"langs":"Spanish, English"},{"city":"Basseterre","country":"St. Kitts","flag":"🇰🇳","tz":"America/St_Kitts","continent":"North America","region":"Caribbean","lon":-62.72,"langs":"English"},{"city":"Castries","country":"St. Lucia","flag":"🇱🇨","tz":"America/St_Lucia","continent":"North America","region":"Caribbean","lon":-61,"langs":"English, Creole"},{"city":"Port of Spain","country":"Trinidad","flag":"🇹🇹","tz":"America/Port_of_Spain","continent":"North America","region":"Caribbean","lon":-61.52,"langs":"English"},{"city":"Denver","country":"USA","flag":"🇺🇸","tz":"America/Denver","continent":"North America","region":"USA Mountain","lon":-104.99,"langs":"English (de facto), Spanish"},{"city":"Anchorage","country":"USA","flag":"🇺🇸","tz":"America/Anchorage","continent":"North America","region":"USA West","lon":-149.9,"langs":"English (de facto), Spanish"},{"city":"Chicago","country":"USA","flag":"🇺🇸","tz":"America/Chicago","continent":"North America","region":"USA Central","lon":-87.63,"langs":"English (de facto), Spanish"},{"city":"Indianapolis","country":"USA","flag":"🇺🇸","tz":"America/Indiana/Indianapolis","continent":"North America","region":"USA East","lon":-86.16,"langs":"English (de facto), Spanish"},{"city":"Los Angeles","country":"USA","flag":"🇺🇸","tz":"America/Los_Angeles","continent":"North America","region":"USA West","lon":-118.24,"langs":"English (de facto), Spanish"},{"city":"New York","country":"USA","flag":"🇺🇸","tz":"America/New_York","continent":"North America","region":"USA East","lon":-74,"langs":"English (de facto), Spanish"},{"city":"Phoenix","country":"USA","flag":"🇺🇸","tz":"America/Phoenix","continent":"North America","region":"USA Mountain","lon":-112.07,"langs":"English (de facto), Spanish"},{"city":"Pago Pago","country":"Am. Samoa","flag":"🇦🇸","tz":"Pacific/Pago_Pago","continent":"Oceania","region":"Pacific Islands","lon":-170.7,"langs":"English, Samoan"},{"city":"Adelaide","country":"Australia","flag":"🇦🇺","tz":"Australia/Adelaide","continent":"Oceania","region":"Australia","lon":138.6,"langs":"English"},{"city":"Darwin","country":"Australia","flag":"🇦🇺","tz":"Australia/Darwin","continent":"Oceania","region":"Australia","lon":130.84,"langs":"English"},{"city":"Brisbane","country":"Australia","flag":"🇦🇺","tz":"Australia/Brisbane","continent":"Oceania","region":"Australia","lon":153.03,"langs":"English"},{"city":"Canberra","country":"Australia","flag":"🇦🇺","tz":"Australia/Sydney","continent":"Oceania","region":"Australia","lon":149.13,"langs":"English"},{"city":"Hobart","country":"Australia","flag":"🇦🇺","tz":"Australia/Hobart","continent":"Oceania","region":"Australia","lon":147.33,"langs":"English"},{"city":"Melbourne","country":"Australia","flag":"🇦🇺","tz":"Australia/Melbourne","continent":"Oceania","region":"Australia","lon":144.96,"langs":"English"},{"city":"Perth","country":"Australia","flag":"🇦🇺","tz":"Australia/Perth","continent":"Oceania","region":"Australia","lon":115.86,"langs":"English"},{"city":"Suva","country":"Fiji","flag":"🇫🇯","tz":"Pacific/Fiji","continent":"Oceania","region":"Pacific Islands","lon":178.44,"langs":"English, Fijian, Hindi"},{"city":"Papeete","country":"Fr. Polynesia","flag":"🇵🇫","tz":"Pacific/Tahiti","continent":"Oceania","region":"Pacific Islands","lon":-149.57,"langs":"French, Tahitian"},{"city":"Hagåtña","country":"Guam","flag":"🇬🇺","tz":"Pacific/Guam","continent":"Oceania","region":"Pacific Islands","lon":144.75,"langs":"English, Chamorro"},{"city":"Tarawa","country":"Kiribati","flag":"🇰🇮","tz":"Pacific/Tarawa","continent":"Oceania","region":"Pacific Islands","lon":172.98,"langs":"English, Gilbertese"},{"city":"Majuro","country":"Marshall Is.","flag":"🇲🇭","tz":"Pacific/Majuro","continent":"Oceania","region":"Pacific Islands","lon":171.38,"langs":"Marshallese, English"},{"city":"Palikir","country":"Micronesia","flag":"🇫🇲","tz":"Pacific/Pohnpei","continent":"Oceania","region":"Pacific Islands","lon":158.16,"langs":"English"},{"city":"Noumea","country":"New Caledonia","flag":"🇳🇨","tz":"Pacific/Noumea","continent":"Oceania","region":"Pacific Islands","lon":166.46,"langs":"French"},{"city":"Auckland","country":"New Zealand","flag":"🇳🇿","tz":"Pacific/Auckland","continent":"Oceania","region":"Pacific Islands","lon":174.76,"langs":"English, Māori"},{"city":"Koror","country":"Palau","flag":"🇵🇼","tz":"Pacific/Palau","continent":"Oceania","region":"Pacific Islands","lon":134.48,"langs":"Palauan, English"},{"city":"Port Moresby","country":"Papua N.G.","flag":"🇵🇬","tz":"Pacific/Port_Moresby","continent":"Oceania","region":"Pacific Islands","lon":147.19,"langs":"English, Tok Pisin"},{"city":"Apia","country":"Samoa","flag":"🇼🇸","tz":"Pacific/Apia","continent":"Oceania","region":"Pacific Islands","lon":-171.83,"langs":"Samoan, English"},{"city":"Honiara","country":"Solomon Is.","flag":"🇸🇧","tz":"Pacific/Guadalcanal","continent":"Oceania","region":"Pacific Islands","lon":159.97,"langs":"English"},{"city":"Nuku'alofa","country":"Tonga","flag":"🇹🇴","tz":"Pacific/Tongatapu","continent":"Oceania","region":"Pacific Islands","lon":-175.22,"langs":"Tongan, English"},{"city":"Funafuti","country":"Tuvalu","flag":"🇹🇻","tz":"Pacific/Funafuti","continent":"Oceania","region":"Pacific Islands","lon":179.2,"langs":"Tuvaluan, English"},{"city":"Honolulu","country":"USA","flag":"🇺🇸","tz":"Pacific/Honolulu","continent":"Oceania","region":"Pacific Islands","lon":-157.86,"langs":"English (de facto), Spanish"},{"city":"Port Vila","country":"Vanuatu","flag":"🇻🇺","tz":"Pacific/Efate","continent":"Oceania","region":"Pacific Islands","lon":168.32,"langs":"Bislama, English, French"},{"city":"Buenos Aires","country":"Argentina","flag":"🇦🇷","tz":"America/Argentina/Buenos_Aires","continent":"South America","region":"Southern Cone","lon":-58.4,"langs":"Spanish"},{"city":"Ushuaia","country":"Argentina","flag":"🇦🇷","tz":"America/Argentina/Ushuaia","continent":"South America","region":"Southern Cone","lon":-68.3,"langs":"Spanish"},{"city":"La Paz","country":"Bolivia","flag":"🇧🇴","tz":"America/La_Paz","continent":"South America","region":"Andean","lon":-68.13,"langs":"Spanish, Quechua, Aymara"},{"city":"Belém","country":"Brazil","flag":"🇧🇷","tz":"America/Belem","continent":"South America","region":"Brazil","lon":-48.5,"langs":"Portuguese"},{"city":"Boa Vista","country":"Brazil","flag":"🇧🇷","tz":"America/Boa_Vista","continent":"South America","region":"Brazil","lon":-60.67,"langs":"Portuguese"},{"city":"Brasília","country":"Brazil","flag":"🇧🇷","tz":"America/Sao_Paulo","continent":"South America","region":"Brazil","lon":-47.93,"langs":"Portuguese"},{"city":"Campo Grande","country":"Brazil","flag":"🇧🇷","tz":"America/Campo_Grande","continent":"South America","region":"Brazil","lon":-54.64,"langs":"Portuguese"},{"city":"Cuiabá","country":"Brazil","flag":"🇧🇷","tz":"America/Cuiaba","continent":"South America","region":"Brazil","lon":-56.09,"langs":"Portuguese"},{"city":"Fortaleza","country":"Brazil","flag":"🇧🇷","tz":"America/Fortaleza","continent":"South America","region":"Brazil","lon":-38.54,"langs":"Portuguese"},{"city":"Recife","country":"Brazil","flag":"🇧🇷","tz":"America/Recife","continent":"South America","region":"Brazil","lon":-34.88,"langs":"Portuguese"},{"city":"Manaus","country":"Brazil","flag":"🇧🇷","tz":"America/Manaus","continent":"South America","region":"Brazil","lon":-60.02,"langs":"Portuguese"},{"city":"Porto Velho","country":"Brazil","flag":"🇧🇷","tz":"America/Porto_Velho","continent":"South America","region":"Brazil","lon":-63.9,"langs":"Portuguese"},{"city":"Rio Branco","country":"Brazil","flag":"🇧🇷","tz":"America/Rio_Branco","continent":"South America","region":"Brazil","lon":-67.81,"langs":"Portuguese"},{"city":"Salvador","country":"Brazil","flag":"🇧🇷","tz":"America/Bahia","continent":"South America","region":"Brazil","lon":-38.5,"langs":"Portuguese"},{"city":"Punta Arenas","country":"Chile","flag":"🇨🇱","tz":"America/Punta_Arenas","continent":"South America","region":"Southern Cone","lon":-70.92,"langs":"Spanish"},{"city":"Santiago","country":"Chile","flag":"🇨🇱","tz":"America/Santiago","continent":"South America","region":"Southern Cone","lon":-70.65,"langs":"Spanish"},{"city":"Bogotá","country":"Colombia","flag":"🇨🇴","tz":"America/Bogota","continent":"South America","region":"Andean","lon":-74.07,"langs":"Spanish"},{"city":"Quito","country":"Ecuador","flag":"🇪🇨","tz":"America/Guayaquil","continent":"South America","region":"Andean","lon":-78.47,"langs":"Spanish"},{"city":"Cayenne","country":"Fr. Guiana","flag":"🇬🇫","tz":"America/Cayenne","continent":"South America","region":"Andean","lon":-52.33,"langs":"French"},{"city":"Georgetown","country":"Guyana","flag":"🇬🇾","tz":"America/Guyana","continent":"South America","region":"Andean","lon":-58.16,"langs":"English"},{"city":"Asunción","country":"Paraguay","flag":"🇵🇾","tz":"America/Asuncion","continent":"South America","region":"Southern Cone","lon":-57.63,"langs":"Spanish, Guaraní"},{"city":"Lima","country":"Peru","flag":"🇵🇪","tz":"America/Lima","continent":"South America","region":"Andean","lon":-77.04,"langs":"Spanish, Quechua"},{"city":"Paramaribo","country":"Suriname","flag":"🇸🇷","tz":"America/Paramaribo","continent":"South America","region":"Andean","lon":-55.17,"langs":"Dutch"},{"city":"Montevideo","country":"Uruguay","flag":"🇺🇾","tz":"America/Montevideo","continent":"South America","region":"Southern Cone","lon":-56.17,"langs":"Spanish"},{"city":"Caracas","country":"Venezuela","flag":"🇻🇪","tz":"America/Caracas","continent":"South America","region":"Andean","lon":-66.92,"langs":"Spanish"}];
+// ── HOME LOCATION (replaces hardcoded IST) ──
+// Default: New Delhi (Asia/Kolkata). Persisted to localStorage.
+const DEFAULT_HOME_IDX = C.findIndex(c=>c.city==="New Delhi");
+let homeIdx = (()=>{
+  try{
+    const saved=localStorage.getItem("nk_home_idx");
+    if(saved!==null){const n=parseInt(saved);if(n>=0&&n<C.length)return n;}
+  }catch(e){}
+  return DEFAULT_HOME_IDX>=0?DEFAULT_HOME_IDX:0;
+})();
+function getHomeCity(){return C[homeIdx]||C[0];}
+function getHomeTz(){return getHomeCity().tz;}
+// Keep IST as alias for home tz (used throughout code)
+let IST=getHomeTz();
+
+const oc={};
+let bizFilters=new Set(),currentSort="az",currentTab="clock";
+// Set of city indices that pass the current filter — updated by applyAll()
+let filteredIndices=new Set(C.map((_,i)=>i));
+
+// ── OFFSET ──
+function goff(tz){
+  if(oc[tz]!==undefined)return oc[tz];
+  const n=new Date();
+  const ms=t=>new Date(new Date(n).toLocaleString("en-US",{timeZone:t})).getTime();
+  oc[tz]=Math.round((ms(tz)-ms(IST))/60000);return oc[tz];
+}
+C.forEach(c=>c._o=goff(c.tz));
+
+function utcl(tz){
+  const n=new Date();
+  const o=new Date(n.toLocaleString("en-US",{timeZone:tz}))-new Date(n.toLocaleString("en-US",{timeZone:"UTC"}));
+  const t=Math.round(o/60000);const s=t>=0?"+":" -";const a=Math.abs(t);
+  return"UTC"+s+String(Math.floor(a/60)).padStart(2,"0")+":"+String(a%60).padStart(2,"0");
+}
+function fmto(m){
+  if(m===0)return"IST ±0";const s=m>0?"+":"-";const a=Math.abs(m);
+  const h=Math.floor(a/60),mn=a%60;return mn?s+h+"h "+mn+"m":s+h+"h";
+}
+function pad(v){return String(v).padStart(2,"0");}
+
+// 12-hour format
+function fmt12(tz){
+  const n=new Date();
+  return n.toLocaleTimeString("en-US",{timeZone:tz,hour12:true,hour:"numeric",minute:"2-digit"});
+}
+function fmt12short(tz){
+  const n=new Date();
+  return n.toLocaleTimeString("en-US",{timeZone:tz,hour12:true,hour:"numeric",minute:"2-digit"});
+}
+function fmtIST(){
+  const n=new Date();
+  return n.toLocaleTimeString("en-US",{timeZone:getHomeTz(),hour12:true,hour:"numeric",minute:"2-digit",second:"2-digit"});
+}
+
+// ── BUSINESS STATUS ──
+const ME_TZ=["Asia/Riyadh","Asia/Dubai","Asia/Doha","Asia/Bahrain","Asia/Kuwait",
+  "Asia/Muscat","Asia/Aden","Asia/Baghdad","Asia/Tehran","Asia/Amman",
+  "Asia/Damascus","Asia/Beirut","Asia/Jerusalem"];
+function bizStatus(tz){
+  const n=new Date();
+  const loc=new Date(n.toLocaleString("en-US",{timeZone:tz}));
+  const h=loc.getHours(),mi=loc.getMinutes(),dow=loc.getDay();
+  const tm=h*60+mi;const isME=ME_TZ.includes(tz);
+  const isWE=isME?(dow===5||dow===6):(dow===0||dow===6);
+  if(isWE)return{s:"weekend",label:"Weekend",cls:"bs-weekend",icon:"🗓"};
+  if(tm<6*60)return{s:"closed",label:"Closed",cls:"bs-closed",icon:"🔴"};
+  if(tm>=6*60&&tm<9*60)return{s:"best_mail",label:"Best to Email",cls:"bs-mail",icon:"📧"};
+  if(tm>=9*60&&tm<9*60+30)return{s:"not_open",label:"Opening Soon",cls:"bs-not_open",icon:"⏳"};
+  if(tm>=9*60+30&&tm<12*60+30)return{s:"best_call",label:"Best to Call",cls:"bs-call",icon:"📞"};
+  if(tm>=12*60+30&&tm<14*60)return{s:"lunch",label:"Lunch Break",cls:"bs-lunch",icon:"🍽"};
+  if(tm>=14*60&&tm<17*60)return{s:"best_call",label:"Best to Call",cls:"bs-call",icon:"📞"};
+  if(tm>=17*60&&tm<18*60+30)return{s:"closing",label:"Closing Soon",cls:"bs-closing",icon:"⚠️"};
+  if(tm>=18*60+30&&tm<20*60)return{s:"best_mail",label:"Good for Email",cls:"bs-mail",icon:"📧"};
+  return{s:"closed",label:"Closed",cls:"bs-closed",icon:"🔴"};
+}
+
+// Hour classification for comparison view
+function hourClass(tz,h){
+  const isME=ME_TZ.includes(tz);
+  const now=new Date();
+  const d=new Date(now.toLocaleString("en-US",{timeZone:tz}));
+  const dow=d.getDay();
+  const isWE=isME?(dow===5||dow===6):(dow===0||dow===6);
+  if(isWE)return"weekend";
+  if(h>=9.5&&h<12.5||h>=14&&h<17)return"best";   // best call
+  if((h>=6&&h<9.5)||h===17||h===18)return"mail";  // best email
+  if(h>=12.5&&h<14)return"lunch";
+  if(h>=9&&h<18)return"work";
+  return"";
+}
+
+// ── LOCALSTORAGE for My Markets & Compare ──
+function lsGet(k,def){try{const v=localStorage.getItem(k);return v?JSON.parse(v):def;}catch(e){return def;}}
+function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
+
+let groups=lsGet("nk_groups",{});         // {groupName:[cityIdx,...]}
+let compCities=lsGet("nk_comp",[]);       // [cityIdx,...] always has home first
+
+// indiaIdx is now dynamic — always points to the current home city
+let indiaIdx=homeIdx;
+
+// Ensure home always first in comp
+if(!compCities.includes(indiaIdx))compCities=[indiaIdx,...compCities];
+
+// ── POPULATE SELECTS (planner/compare only now) ──
+function bsel(src){
+  const opts=C.map((c,i)=>'<option value="'+i+'">'+c.flag+' '+c.city+', '+c.country+'</option>').join("");
+  ["targetCity","mw1","mw2","destCity"].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=opts;});
+  const mw3=document.getElementById("mw3");if(mw3)mw3.innerHTML='<option value="">— skip —</option>'+opts;
+  const cs=document.getElementById("compCitySelect");if(cs)cs.innerHTML=opts;
+  const dd=document.getElementById("dispDate");
+  if(dd){const t=new Date();dd.value=t.getFullYear()+"-"+pad(t.getMonth()+1)+"-"+pad(t.getDate());}
+}
+bsel(C);
+
+// ── MULTI-CHECKBOX LOCATION FILTERS ──
+// State: each key holds a Set of selected values
+const locFilters={cont:new Set(),reg:new Set(),ctr:new Set(),tz:new Set()};
+const locOpen={cont:false,reg:false,ctr:false,tz:false};
+
+function buildLocList(key){
+  const list=document.getElementById("locList_"+key);if(!list)return;
+  let items=[];
+  if(key==="cont")items=["Asia","Europe","Africa","North America","South America","Oceania"];
+  else if(key==="reg")items=[...new Set(C.map(c=>c.region))].sort();
+  else if(key==="ctr")items=[...new Set(C.map(c=>c.country))].sort();
+  else if(key==="tz")items=[...new Set(C.map(c=>c.tz))].sort((a,b)=>(oc[a]||0)-(oc[b]||0));
+  const sel=locFilters[key];
+  list.innerHTML=items.map(v=>{
+    const label=key==="tz"?utcl(v)+" — "+v:v;
+    return '<label class="loc-item'+(sel.has(v)?" lc":"")+'" data-val="'+v+'"><input type="checkbox"'+(sel.has(v)?" checked":"")+'> '+label+'</label>';
+  }).join("");
+  // events
+  list.querySelectorAll("input[type=checkbox]").forEach(cb=>{
+    cb.addEventListener("change",function(){
+      const val=this.closest("[data-val]").dataset.val;
+      if(this.checked)locFilters[key].add(val);else locFilters[key].delete(val);
+      this.closest(".loc-item").classList.toggle("lc",this.checked);
+      syncLocUi(key);applyAll();
+    });
+  });
+}
+function filterLocList(key,q){
+  const list=document.getElementById("locList_"+key);if(!list)return;
+  const qL=q.toLowerCase();
+  list.querySelectorAll(".loc-item").forEach(item=>{
+    const v=item.dataset.val||"";
+    item.style.display=(!qL||v.toLowerCase().includes(qL))?"":"none";
+  });
+}
+function syncLocUi(key){
+  const n=locFilters[key].size;
+  const badge=document.getElementById("locBadge_"+key);
+  const lbl=document.getElementById("locLbl_"+key);
+  const cnt=document.getElementById("locCount_"+key);
+  const chips=document.getElementById("locChips_"+key);
+  if(badge){badge.textContent=n;badge.style.display=n?"inline-block":"none";}
+  if(cnt)cnt.textContent=n+" selected";
+  if(lbl){if(!n){lbl.textContent=key==="cont"?"All Continents…":key==="reg"?"All Regions…":key==="ctr"?"All Countries…":"All Offsets…";lbl.className="loc-trigger-lbl ph";}else{lbl.textContent=[...locFilters[key]].map(v=>key==="tz"?utcl(v):v).join(", ");lbl.className="loc-trigger-lbl";}}
+  if(chips)chips.innerHTML=[...locFilters[key]].map(v=>'<span class="loc-chip" data-lkey="'+key+'" data-lval="'+v+'">'+(key==="tz"?utcl(v):v)+' ✕</span>').join("");
+}
+function clearLocMs(key){
+  locFilters[key].clear();
+  const list=document.getElementById("locList_"+key);
+  if(list)list.querySelectorAll("input[type=checkbox]").forEach(cb=>{cb.checked=false;cb.closest(".loc-item").classList.remove("lc");});
+  syncLocUi(key);applyAll();
+}
+function toggleLocMs(key){
+  const keys=["cont","reg","ctr","tz"];
+  keys.forEach(k=>{
+    if(k!==key&&locOpen[k]){locOpen[k]=false;const d=document.getElementById("locDrop_"+k);const t=document.getElementById("locTrig_"+k);if(d)d.classList.remove("open");if(t)t.classList.remove("open");}
+  });
+  locOpen[key]=!locOpen[key];
+  const drop=document.getElementById("locDrop_"+key);const trig=document.getElementById("locTrig_"+key);
+  if(drop)drop.classList.toggle("open",locOpen[key]);
+  if(trig)trig.classList.toggle("open",locOpen[key]);
+  if(locOpen[key])buildLocList(key);
+}
+document.addEventListener("click",function(e){
+  ["cont","reg","ctr","tz"].forEach(key=>{
+    if(!locOpen[key])return;
+    const wrap=document.getElementById("locWrap_"+key);
+    if(wrap&&!wrap.contains(e.target)){locOpen[key]=false;const d=document.getElementById("locDrop_"+key);const t=document.getElementById("locTrig_"+key);if(d)d.classList.remove("open");if(t)t.classList.remove("open");}
+  });
+});
+// chip clicks
+["cont","reg","ctr","tz"].forEach(key=>{
+  const chips=document.getElementById("locChips_"+key);
+  if(chips)chips.addEventListener("click",function(e){
+    const chip=e.target.closest(".loc-chip");if(!chip)return;
+    const k=chip.dataset.lkey,v=chip.dataset.lval;
+    locFilters[k].delete(v);
+    const cb=document.querySelector('#locList_'+k+' [data-val="'+v+'"] input');
+    if(cb){cb.checked=false;cb.closest(".loc-item").classList.remove("lc");}
+    syncLocUi(k);applyAll();
+  });
+});
+
+// ── COMPARE SEARCH AUTOCOMPLETE ──
+let compSelectedIdx = null;
+let compSugFocused = -1;
+
+function buildCompSuggestions(query) {
+  const sug = document.getElementById("compSuggestions");
+  if (!sug) return;
+  const q = query.toLowerCase().trim();
+  if (!q) { sug.classList.remove("show"); return; }
+  const matches = C.map((c, i) => ({c, i}))
+    .filter(({c,i}) =>
+      filteredIndices.has(i) && (
+      c.city.toLowerCase().includes(q) ||
+      c.country.toLowerCase().includes(q) ||
+      (c.langs && c.langs.toLowerCase().includes(q)) ||
+      c.region.toLowerCase().includes(q))
+    ).slice(0, 8);
+  if (!matches.length) {
+    sug.innerHTML = '<div class="comp-sug-noresult">No markets found for "' + query + '"</div>';
+    sug.classList.add("show");
+    return;
+  }
+  sug.innerHTML = matches.map(({c, i}) => {
+    const inComp = compCities.includes(i);
+    return '<div class="comp-sug-item' + (inComp ? ' selected' : '') + '" data-idx="' + i + '">'
+      + '<span class="comp-sug-flag">' + c.flag + '</span>'
+      + '<div><div class="comp-sug-city">' + c.city + (inComp ? ' ✓' : '') + '</div>'
+      + '<div class="comp-sug-country">' + c.country + ' · ' + c.langs + '</div></div>'
+      + '<span class="comp-sug-tz">' + utcl(c.tz) + '</span>'
+      + '</div>';
+  }).join('');
+  sug.classList.add("show");
+  compSugFocused = -1;
+}
+
+function selectCompSug(idx) {
+  const c = C[idx];
+  if (!c) return;
+  compSelectedIdx = idx;
+  document.getElementById("compCitySelect").value = idx;
+  document.getElementById("compSearchInput").value = c.flag + ' ' + c.city + ', ' + c.country;
+  document.getElementById("compSuggestions").classList.remove("show");
+}
+
+// Comp search setup (runs immediately — script is at end of body so DOM is ready)
+(function setupCompSearch(){
+  const inp = document.getElementById("compSearchInput");
+  const sug = document.getElementById("compSuggestions");
+  if (!inp || !sug) return;
+  inp.addEventListener("input", function() {
+    compSelectedIdx = null;
+    document.getElementById("compCitySelect").value = "";
+    buildCompSuggestions(this.value);
+  });
+  inp.addEventListener("keydown", function(e) {
+    const items = sug.querySelectorAll(".comp-sug-item");
+    if (e.key === "ArrowDown") { e.preventDefault(); compSugFocused = Math.min(compSugFocused+1, items.length-1); items.forEach((it,i)=>it.classList.toggle("focused",i===compSugFocused)); }
+    else if (e.key === "ArrowUp") { e.preventDefault(); compSugFocused = Math.max(compSugFocused-1, 0); items.forEach((it,i)=>it.classList.toggle("focused",i===compSugFocused)); }
+    else if (e.key === "Enter") { e.preventDefault(); if(compSugFocused>=0&&items[compSugFocused]){selectCompSug(parseInt(items[compSugFocused].dataset.idx));}else{addCompCity();} }
+    else if (e.key === "Escape") { sug.classList.remove("show"); }
+  });
+  sug.addEventListener("click", function(e) {
+    const item = e.target.closest(".comp-sug-item");
+    if (item) selectCompSug(parseInt(item.dataset.idx));
+  });
+  document.addEventListener("click", function(e) {
+    if (!inp.contains(e.target) && !sug.contains(e.target)) sug.classList.remove("show");
+  });
+})();
+
+// Override addCompCity to use compSelectedIdx
+const _origAddCompCity = addCompCity;
+function addCompCity() {
+  const idx = compSelectedIdx !== null ? compSelectedIdx : parseInt(document.getElementById("compCitySelect").value);
+  if (isNaN(idx) || idx < 0 || idx >= C.length) { return; }
+  if (compCities.includes(idx)) {
+    const el = document.getElementById("comp-now-" + idx);
+    if (el) { el.style.background = "rgba(212,102,26,.15)"; setTimeout(() => { el.style.background = ""; }, 800); }
+    return;
+  }
+  compCities.push(idx); lsSet("nk_comp", compCities); buildCompView();
+  // Reset search
+  const inp = document.getElementById("compSearchInput");
+  if (inp) inp.value = "";
+  compSelectedIdx = null;
+  document.getElementById("compSuggestions").classList.remove("show");
+}
+
+// ── MULTI-SELECT DROPDOWN SYSTEM ──
+let langFilter=[];            // used in applyAll
+
+// Generic open/close
+const msState={biz:false,lang:false};
+function toggleMs(key){
+  const other=key==="biz"?"lang":"biz";
+  if(msState[other]){msState[other]=false;document.getElementById(other+"MsDropdown").style.display="none";document.getElementById(other+"MsTrigger").classList.remove("open");}
+  msState[key]=!msState[key];
+  document.getElementById(key+"MsDropdown").style.display=msState[key]?"block":"none";
+  document.getElementById(key+"MsTrigger").classList.toggle("open",msState[key]);
+  if(msState[key]&&key==="lang"){document.getElementById("langMsSearch").focus();}
+}
+// Close on outside click
+document.addEventListener("click",function(e){
+  ["biz","lang"].forEach(key=>{
+    if(!msState[key])return;
+    const wrap=document.getElementById(key+"MsWrap");
+    if(wrap&&!wrap.contains(e.target)){msState[key]=false;document.getElementById(key+"MsDropdown").style.display="none";document.getElementById(key+"MsTrigger").classList.remove("open");}
+  });
+});
+
+// ── BIZ MULTI-SELECT ──
+const BIZ_LABELS={"best_call":"📞 Best to Call","best_mail":"📧 Best to Email","open":"🟢 Open Now","closing":"⚠️ Closing Soon","lunch":"🍽 Lunch Break","not_open":"⏳ Opening Soon","closed":"🔴 Closed","weekend":"🗓 Weekend"};
+
+document.getElementById("bizMsList").addEventListener("change",function(e){
+  const cb=e.target;if(cb.type!=="checkbox")return;
+  const val=cb.value;
+  if(cb.checked)bizFilters.add(val);else bizFilters.delete(val);
+  cb.closest(".ms-item").classList.toggle("checked",cb.checked);
+  syncBizUi();applyAll();
+});
+
+function syncBizUi(){
+  const n=bizFilters.size;
+  document.getElementById("bizMsBadge").textContent=n;
+  document.getElementById("bizMsBadge").style.display=n?"inline-block":"none";
+  document.getElementById("bizMsCount").textContent=n+" selected";
+  const lbl=document.getElementById("bizMsLabel");
+  if(!n){lbl.textContent="Any status…";lbl.className="ms-trigger-label placeholder";}
+  else{lbl.textContent=[...bizFilters].map(v=>BIZ_LABELS[v]||v).join(", ");lbl.className="ms-trigger-label";}
+  // chips
+  const chips=document.getElementById("bizMsChips");
+  chips.innerHTML=[...bizFilters].map(v=>'<span class="ms-chip" data-biz-clear="'+v+'">'+BIZ_LABELS[v]+'<span class="ms-chip-x">✕</span></span>').join("");
+}
+document.getElementById("bizMsChips").addEventListener("click",function(e){
+  const chip=e.target.closest("[data-biz-clear]");
+  if(!chip)return;
+  const v=chip.dataset.bizClear;
+  bizFilters.delete(v);
+  const cb=document.querySelector('#bizMsList input[value="'+v+'"]');
+  if(cb){cb.checked=false;cb.closest(".ms-item").classList.remove("checked");}
+  syncBizUi();applyAll();
+});
+function clearMsBiz(){
+  bizFilters.clear();
+  document.querySelectorAll("#bizMsList input[type=checkbox]").forEach(cb=>{cb.checked=false;cb.closest(".ms-item").classList.remove("checked");});
+  syncBizUi();applyAll();
+}
+
+// ── LANG MULTI-SELECT ──
+const ALL_LANGS=[...new Set(C.flatMap(c=>(c.langs&&c.langs!=="—")?c.langs.split(",").map(l=>l.trim()):[]))].sort();
+
+function buildLangList(query){
+  const list=document.getElementById("langMsList");
+  const q=(query||"").toLowerCase().trim();
+  const visible=q?ALL_LANGS.filter(l=>l.toLowerCase().includes(q)):ALL_LANGS;
+  list.innerHTML=visible.map(l=>{
+    const checked=langFilter.includes(l);
+    return '<label class="ms-item'+(checked?" checked":"")+'" data-lang="'+l+'"><input type="checkbox"'+(checked?" checked":"")+'> '+l+'</label>';
+  }).join("");
+}
+buildLangList();
+
+document.getElementById("langMsList").addEventListener("change",function(e){
+  const cb=e.target;if(cb.type!=="checkbox")return;
+  const item=cb.closest(".ms-item");const lang=item.dataset.lang;
+  if(cb.checked){if(!langFilter.includes(lang))langFilter.push(lang);}
+  else{langFilter=langFilter.filter(l=>l!==lang);}
+  item.classList.toggle("checked",cb.checked);
+  syncLangUi();applyAll();
+});
+document.getElementById("langMsSearch").addEventListener("input",function(){buildLangList(this.value);});
+
+function syncLangUi(){
+  const n=langFilter.length;
+  document.getElementById("langMsBadge").textContent=n;
+  document.getElementById("langMsBadge").style.display=n?"inline-block":"none";
+  document.getElementById("langMsCount").textContent=n+" selected";
+  const lbl=document.getElementById("langMsLabel");
+  if(!n){lbl.textContent="Any language…";lbl.className="ms-trigger-label placeholder";}
+  else{lbl.textContent=langFilter.join(", ");lbl.className="ms-trigger-label";}
+  // chips
+  const chips=document.getElementById("langMsChips");
+  chips.innerHTML=langFilter.map(l=>'<span class="ms-chip" data-lang-clear="'+l+'">'+l+'<span class="ms-chip-x">✕</span></span>').join("");
+  // sync checkboxes in list (some may be hidden by search)
+  document.querySelectorAll("#langMsList .ms-item").forEach(item=>{
+    const cb=item.querySelector("input[type=checkbox]");
+    const checked=langFilter.includes(item.dataset.lang);
+    if(cb)cb.checked=checked;
+    item.classList.toggle("checked",checked);
+  });
+}
+document.getElementById("langMsChips").addEventListener("click",function(e){
+  const chip=e.target.closest("[data-lang-clear]");
+  if(!chip)return;
+  const l=chip.dataset.langClear;
+  langFilter=langFilter.filter(x=>x!==l);
+  const cb=document.querySelector('#langMsList .ms-item[data-lang="'+l+'"] input');
+  if(cb){cb.checked=false;cb.closest(".ms-item").classList.remove("checked");}
+  syncLangUi();applyAll();
+});
+function clearMsLang(){
+  langFilter=[];
+  document.querySelectorAll("#langMsList input[type=checkbox]").forEach(cb=>{cb.checked=false;cb.closest(".ms-item").classList.remove("checked");});
+  syncLangUi();applyAll();
+}
+
+
+// ── BUILD GRID ──
+function buildGrid(){
+  const g=document.getElementById("grid");g.innerHTML="";
+  C.forEach((c,i)=>{
+    const off=c._o;const cls=off>0?"ah":off<0?"bh":"sm";
+    const ii=i===homeIdx;const biz=bizStatus(c.tz);
+    const inGrp=isInAnyGroup(i);
+    const d=document.createElement("div");
+    d.className="card "+cls+(ii?" ic":"")+(biz.s==="best_call"?" biz-call":biz.s==="best_mail"?" biz-mail":biz.s==="open"?" biz-open":biz.s==="closing"?" biz-closing":"")+(inGrp?" in-group":"");
+    d.id="cg"+i;d.dataset.cont=c.continent;d.dataset.reg=c.region;d.dataset.ctr=c.country;
+    d.dataset.tz=c.tz;d.dataset.off=off;d.dataset.lon=c.lon;d.dataset.biz=biz.s;d.dataset.idx=i;d.dataset.langs=(c.langs||"").toLowerCase();
+    d.dataset.q=(c.city+" "+c.country+" "+c.region+" "+c.continent).toLowerCase();
+    d.innerHTML=
+      '<div class="fav-btn" title="Add to My Markets" onclick="toggleGroupMenu('+i+',event)"><svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg></div>'
+      +'<div class="ct"><div class="ct-left"><div class="fl2">'+c.flag+'</div><div><div class="cn">'+c.city+'</div><div class="cc">'+c.country+'</div><div class="clang">'+c.langs+'</div></div></div></div>'
+      +'<div class="tb" id="gt'+i+'">--:--:--</div>'
+      +'<div class="bstat '+biz.cls+'" id="gbz'+i+'">'+biz.icon+' '+biz.label+'</div>'
+      +'<div class="dd" id="gdd'+i+'"></div>'
+      +'<div class="cf"><div><div class="ds" id="gdt'+i+'"></div><div class="uts">'+utcl(c.tz)+'</div></div><div class="ot">'+fmto(off)+'</div></div>';
+    g.appendChild(d);
+  });
+}
+buildGrid();
+
+// Permanent event delegation for My Markets group actions (set once, survives re-renders)
+document.getElementById("mmGroups").addEventListener("click",function(e){
+  const rm=e.target.closest(".mm-rm-btn");
+  const cmp=e.target.closest(".mm-compare-btn");
+  const del=e.target.closest(".mm-delete-btn");
+  if(rm)removeFromGroup(decodeURIComponent(rm.dataset.gname),parseInt(rm.dataset.cidx));
+  else if(cmp)compareGroup(decodeURIComponent(cmp.dataset.gname));
+  else if(del)deleteGroup(decodeURIComponent(del.dataset.gname));
+});
+
+// ── BUILD TABLE ──
+function buildTable(){
+  const tb=document.getElementById("tblBody");if(!tb||tb.dataset.built)return;
+  tb.dataset.built="1";
+  C.forEach((c,i)=>{
+    const off=c._o;const ii=i===homeIdx;
+    const tr=document.createElement("tr");if(ii)tr.className="india-row";
+    tr.id="tr"+i;tr.dataset.cont=c.continent;tr.dataset.reg=c.region;tr.dataset.ctr=c.country;
+    tr.dataset.tz=c.tz;tr.dataset.off=off;tr.dataset.lon=c.lon;tr.dataset.biz="";tr.dataset.langs=(c.langs||"").toLowerCase();
+    tr.dataset.q=(c.city+" "+c.country+" "+c.region+" "+c.continent).toLowerCase();
+    tr.innerHTML='<td class="tflag">'+c.flag+'</td><td class="tcity">'+c.city+'</td>'
+      +'<td style="font-size:11px;color:var(--muted)">'+c.country+'</td>'
+      +'<td class="ttime" id="tt'+i+'">--:--:--</td>'
+      +'<td style="font-size:10px;color:var(--muted)" id="tdt'+i+'">—</td>'
+      +'<td style="font-size:10px;color:var(--muted)" id="tdy'+i+'">—</td>'
+      +'<td style="font-size:10px;color:var(--muted2)">'+utcl(c.tz)+'</td>'
+      +'<td class="toff" style="color:'+(off>0?"var(--green)":off<0?"var(--red)":"var(--saffron)")+'">'+fmto(off)+'</td>'
+      +'<td><span class="bstat" id="tbz'+i+'">—</span></td>'
+      +'<td class="tlang">'+c.langs+'</td>';
+    tb.appendChild(tr);
+  });
+}
+
+// ── CLOCK UPDATER ──
+function upd(){
+  const n=new Date();
+  document.getElementById("ist").textContent=fmtIST();
+  document.getElementById("isd").textContent=n.toLocaleDateString("en-IN",{timeZone:getHomeTz(),weekday:"short",day:"numeric",month:"short"});
+  const id=new Date(n.toLocaleString("en-US",{timeZone:getHomeTz()})).getDate();
+  let openCnt=0;
+  C.forEach((c,i)=>{
+    const ts=fmt12(c.tz);
+    const ds=n.toLocaleDateString("en-US",{timeZone:c.tz,day:"numeric",month:"short"});
+    const dy=n.toLocaleDateString("en-US",{timeZone:c.tz,weekday:"short"});
+    const cd=new Date(n.toLocaleString("en-US",{timeZone:c.tz})).getDate();
+    const diff=cd-id;const ddStr=diff>0?"+1 Day":diff<0?"-1 Day":"";
+    const biz=bizStatus(c.tz);
+    if(biz.s==="open"||biz.s==="best_call")openCnt++;
+    // Grid
+    const gt=document.getElementById("gt"+i);
+    if(gt){
+      gt.textContent=ts;
+      const gbz=document.getElementById("gbz"+i);const gdd=document.getElementById("gdd"+i);const gdt=document.getElementById("gdt"+i);const card=document.getElementById("cg"+i);
+      if(gbz){gbz.className="bstat "+biz.cls;gbz.innerHTML=biz.icon+" "+biz.label;}
+      if(gdd)gdd.textContent=ddStr;if(gdt)gdt.textContent=ds+" ("+dy+")";
+      if(card){card.dataset.biz=biz.s;card.classList.toggle("biz-call",biz.s==="best_call");card.classList.toggle("biz-mail",biz.s==="best_mail");card.classList.toggle("biz-open",biz.s==="open");card.classList.toggle("biz-closing",biz.s==="closing");}
+    }
+    // Table
+    const tt=document.getElementById("tt"+i);
+    if(tt){
+      tt.textContent=ts;
+      const tdt=document.getElementById("tdt"+i);const tdy=document.getElementById("tdy"+i);const tbz=document.getElementById("tbz"+i);const trow=document.getElementById("tr"+i);
+      if(tdt)tdt.textContent=ds;if(tdy)tdy.textContent=dy+(ddStr?" ("+ddStr+")":"");
+      if(tbz){tbz.className="bstat "+biz.cls;tbz.innerHTML=biz.icon+" "+biz.label;}
+      if(trow)trow.dataset.biz=biz.s;
+    }
+  });
+  document.getElementById("openCount").textContent=openCnt;
+  // Update comp view times
+  updateCompTimes();
+}
+upd();setInterval(upd,1000);
+
+// ── COMPARISON VIEW ──
+function buildCompView(){
+  const tbl=document.getElementById("compTable");
+  tbl.innerHTML="";
+  const now=new Date();
+  const istH=new Date(now.toLocaleString("en-US",{timeZone:getHomeTz()})).getHours();
+  const istM=new Date(now.toLocaleString("en-US",{timeZone:getHomeTz()})).getMinutes();
+
+  // Fixed 24 hours: 0 (12 AM) through 23 (11 PM) — always midnight to midnight in IST
+  const hours=Array.from({length:24},(_,i)=>i);
+
+
+
+  // City rows
+  compCities.forEach(idx=>{
+    const c=C[idx];if(!c)return;
+    const off=c._o;  // minutes from IST
+    const biz=bizStatus(c.tz);
+    const ii=idx===indiaIdx;
+    const tr=document.createElement("tr");
+    tr.className="comp-row"+(ii?" india-comp":"");
+
+    // Info cell
+    const info=document.createElement("td");info.className="comp-cell-info";
+    const localH=new Date(now.toLocaleString("en-US",{timeZone:c.tz})).getHours();
+    const localM=new Date(now.toLocaleString("en-US",{timeZone:c.tz})).getMinutes();
+    info.innerHTML=
+      '<div class="comp-city-name">'+c.flag+' '+c.city
+        +(ii?'<span style="font-size:9px;background:rgba(212,102,26,.15);color:var(--saffron);padding:1px 5px;border-radius:3px;margin-left:4px">HOME</span>'
+            :'<span class="comp-remove" data-cidx="'+idx+'" title="Remove">✕</span>')
+      +'</div>'
+      +'<div class="comp-country">'+c.country+'</div>'
+      +'<div class="comp-lang">'+c.langs+'</div>'
+      +'<div class="comp-now" id="comp-now-'+idx+'">—</div>'
+      +'<span class="comp-bstat '+biz.cls+'" id="comp-bz-'+idx+'">'+biz.icon+' '+biz.label+'</span>';
+    tr.appendChild(info);
+
+    // Hour cells — one for each IST hour 0-23
+    const hoursCell=document.createElement("td");hoursCell.style.padding="0";
+    const hdiv2=document.createElement("div");hdiv2.className="comp-hours-row";
+    hours.forEach(istHour=>{
+      // For a given IST hour (0-23), what is the local hour in this city?
+      // offset = city_utc_offset - IST_utc_offset (in minutes)
+      // local_minutes = IST_hour * 60 + offset
+      const localMins=(istHour*60 + off + 24*60*10) % (24*60);
+      const lh=Math.floor(localMins/60);
+      const isNow=lh===localH && istHour===istH;
+      const cls=hourClass(c.tz,lh);
+
+      const cell=document.createElement("div");
+      cell.className="comp-hour"+(cls?" "+cls:"")+(isNow?" now":"");
+      cell.id="comp-c-"+idx+"-"+istHour;
+
+      const ampm=lh>=12?"PM":"AM";const h12=lh%12||12;
+      const isMid=lh===0,isNoon=lh===12;
+      cell.innerHTML=
+        '<div class="ch-time">'
+          +(isMid?"12":isNoon?"12":h12)
+          +'<span style="font-size:6px;display:block;margin-top:1px">'+(isMid?"MID":isNoon?"NOON":ampm)+'</span>'
+        +'</div>';
+      if(cls==="best")cell.innerHTML+='<div class="ch-label">Call</div>';
+      else if(cls==="mail")cell.innerHTML+='<div class="ch-label">Email</div>';
+      else if(cls==="lunch")cell.innerHTML+='<div class="ch-label">Lunch</div>';
+      else if(cls==="weekend"){
+        // Show what the slot would be if it were a weekday (dimmed suggestion)
+        const wdCls=(lh>=9.5&&lh<12.5||lh>=14&&lh<17)?"Call":(lh>=6&&lh<9.5||lh===17||lh===18)?"Email":(lh>=12.5&&lh<14)?"Lunch":null;
+        cell.innerHTML+='<div class="ch-label" style="color:#a0a0b8">'+(wdCls?wdCls:"WE")+'</div>';
+      }
+      hdiv2.appendChild(cell);
+    });
+    hoursCell.appendChild(hdiv2);tr.appendChild(hoursCell);
+    tbl.appendChild(tr);
+  });
+
+  // Event delegation for remove buttons in comp view
+  tbl.addEventListener("click",function(e){
+    const rm=e.target.closest(".comp-remove");
+    if(rm)removeCompCity(parseInt(rm.dataset.cidx));
+  });
+
+  // Auto-scroll + position now-line and seek-line
+  const wrap=document.getElementById("compTableWrap");
+  requestAnimationFrame(()=>{
+    const nowCell=document.getElementById("comp-c-"+indiaIdx+"-"+istH);
+    if(wrap&&nowCell){
+      const infoW=document.querySelector(".comp-cell-info")?document.querySelector(".comp-cell-info").offsetWidth:165;
+      const wrapW=wrap.clientWidth;
+      wrap.scrollLeft=Math.max(0,nowCell.offsetLeft-infoW-wrapW/2+nowCell.offsetWidth/2);
+    }
+    positionNowLine();
+    initSeekLine();
+  });
+}
+
+// Position the green now-line based on current minute within the hour
+function positionNowLine(){
+  const now0=new Date();
+  const istH=new Date(now0.toLocaleString("en-US",{timeZone:getHomeTz()})).getHours();
+  const wrap=document.getElementById("compTableWrap");
+  const nowCell=document.getElementById("comp-c-"+indiaIdx+"-"+istH);
+  const line=document.getElementById("compNowLine");
+  const outer=document.getElementById("compWrapOuter");
+  if(!nowCell||!line||!outer||!wrap)return;
+  const infoW=document.querySelector(".comp-cell-info")?document.querySelector(".comp-cell-info").offsetWidth:165;
+  const cellW=nowCell.offsetWidth;
+  const now=new Date();
+  const istMins=new Date(now.toLocaleString("en-US",{timeZone:getHomeTz()})).getMinutes();
+  const progress=istMins/60; // 0.0 to 1.0 within the hour
+  // Position = cell left edge + progress through cell - scroll offset + info col
+  const lineX=infoW + (nowCell.offsetLeft - infoW - wrap.scrollLeft) + cellW*progress;
+  if(lineX > infoW && lineX < outer.offsetWidth){
+    line.style.left=lineX+"px";
+    line.style.display="block";
+    // Show current home time on the green line
+    const nowt=new Date();
+    const istH2=new Date(nowt.toLocaleString("en-US",{timeZone:getHomeTz()})).getHours();
+    const istM2=new Date(nowt.toLocaleString("en-US",{timeZone:getHomeTz()})).getMinutes();
+    const ap=istH2>=12?"PM":"AM";const h12=istH2%12||12;
+    line.setAttribute("data-time",h12+":"+(istM2<10?"0":"")+istM2+" "+ap);
+  } else {
+    line.style.display="none";
+  }
+}
+
+function initSeekLine(){
+  const wrap=document.getElementById("compTableWrap");
+  const outer=document.getElementById("compWrapOuter");
+  const seekLine=document.getElementById("compSeekLine");
+  const seekLabel=document.getElementById("compSeekLabel");
+  if(!wrap||!outer||!seekLine)return;
+
+  // Remove old listeners
+  if(outer._seekDown){outer.removeEventListener("mousedown",outer._seekDown);outer.removeEventListener("touchstart",outer._seekDown);}
+  if(wrap._seekScroll){wrap.removeEventListener("scroll",wrap._seekScroll);}
+
+  function getHourFromX(clientX){
+    const rect=outer.getBoundingClientRect();
+    const infoW=document.querySelector(".comp-cell-info")?document.querySelector(".comp-cell-info").offsetWidth:165;
+    const x=clientX-rect.left-infoW+wrap.scrollLeft;
+    const cellW=document.querySelector(".comp-hour")?document.querySelector(".comp-hour").offsetWidth:48;
+    const h=Math.floor(x/cellW);
+    return Math.max(0,Math.min(23,h));
+  }
+  function getMinuteFromX(clientX){
+    const rect=outer.getBoundingClientRect();
+    const infoW=document.querySelector(".comp-cell-info")?document.querySelector(".comp-cell-info").offsetWidth:165;
+    const x=clientX-rect.left-infoW+wrap.scrollLeft;
+    const cellW=document.querySelector(".comp-hour")?document.querySelector(".comp-hour").offsetWidth:48;
+    const fractional=(x/cellW)-Math.floor(x/cellW);
+    return Math.min(59,Math.max(0,Math.round(fractional*60)));
+  }
+
+  function getSeekLineX(clientX){
+    const rect=outer.getBoundingClientRect();
+    const infoW=document.querySelector(".comp-cell-info")?document.querySelector(".comp-cell-info").offsetWidth:165;
+    return Math.max(infoW, Math.min(outer.offsetWidth-2, clientX-rect.left));
+  }
+
+  function showSeek(clientX){
+    const x=getSeekLineX(clientX);
+    const h=getHourFromX(clientX);
+    const m=getMinuteFromX(clientX);
+    seekLine.style.left=x+"px";
+    seekLine.style.display="block";
+    const pad=v=>String(v).padStart(2,"0");
+    const fmtISTTime=(hh,mm)=>{
+      const ampm=hh>=12?"PM":"AM";const h12=hh%12||12;
+      return h12+":"+pad(mm)+" "+ampm;
+    };
+    const istLabel=fmtISTTime(h,m);
+    // Build seek label with all city local times — uniform rows for every city
+    let rows='';
+    compCities.forEach(idx=>{
+      const c=C[idx];if(!c)return;
+      const totalLocalMins=(h*60+m+c._o+24*60*10)%(24*60);
+      const lh=Math.floor(totalLocalMins/60);
+      const lm=totalLocalMins%60;
+      const la=lh>=12?"PM":"AM";const lh12=lh%12||12;
+      const lt=lh12+":"+pad(lm)+" "+la;
+      const isME=ME_TZ.includes(c.tz);
+      const now2=new Date();const dow=new Date(now2.toLocaleString("en-US",{timeZone:c.tz})).getDay();
+      const isWE=isME?(dow===5||dow===6):(dow===0||dow===6);
+      const isBiz=!isWE&&lh>=9&&lh<18&&!(lh>=12&&lm>=30&&lh<14);
+      const timeColor=isWE?"#9090a8":isBiz?"var(--green)":"var(--red)";
+      rows+='<div style="display:flex;justify-content:space-between;align-items:center;font-size:9px;color:var(--txt2);padding:3px 0;gap:12px;border-bottom:1px solid var(--bg)">'
+        +'<span>'+c.flag+' '+c.city+'</span>'
+        +'<b style="color:'+timeColor+'">'+lt+'</b>'
+        +'</div>';
+    });
+    seekLabel.innerHTML=rows;
+    // Keep label inside viewport — flip to left side when too close to right edge
+    const outerW=outer.offsetWidth;
+    seekLabel.style.left=(x>outerW*0.6)?"-"+(seekLabel.offsetWidth+8||120)+"px":"8px";
+    seekLabel.style.minWidth="";
+  }
+
+  let isDragging=false;
+
+  outer._seekDown=function(e){
+    const touch=e.touches?e.touches[0]:e;
+    const rect=outer.getBoundingClientRect();
+    const infoW=document.querySelector(".comp-cell-info")?document.querySelector(".comp-cell-info").offsetWidth:165;
+    if(touch.clientX-rect.left < infoW)return; // ignore info col clicks
+    isDragging=true;
+    showSeek(touch.clientX);
+    e.preventDefault&&e.preventDefault();
+  };
+
+  function onMove(e){
+    if(!isDragging)return;
+    const touch=e.touches?e.touches[0]:e;
+    showSeek(touch.clientX);
+  }
+  function onUp(){isDragging=false;}
+
+  outer.addEventListener("mousedown",outer._seekDown);
+  outer.addEventListener("touchstart",outer._seekDown,{passive:false});
+  document.addEventListener("mousemove",onMove);
+  document.addEventListener("mouseup",onUp);
+  document.addEventListener("touchmove",onMove,{passive:true});
+  document.addEventListener("touchend",onUp);
+
+  // Update now-line on table scroll
+  wrap._seekScroll=function(){positionNowLine();};
+  wrap.addEventListener("scroll",wrap._seekScroll,{passive:true});
+}
+
+function updateCompTimes(){
+  if(currentTab!=="comp")return;
+  const now=new Date();
+  const istH=new Date(now.toLocaleString("en-US",{timeZone:getHomeTz()})).getHours();
+  compCities.forEach(idx=>{
+    const c=C[idx];if(!c)return;
+    const el=document.getElementById("comp-now-"+idx);
+    const bz=document.getElementById("comp-bz-"+idx);
+    const biz=bizStatus(c.tz);
+    if(el)el.textContent=fmt12short(c.tz);
+    if(bz){bz.className="comp-bstat "+biz.cls;bz.innerHTML=biz.icon+" "+biz.label;}
+    // Refresh "now" cell highlight for this city's row
+    for(let h=0;h<24;h++){
+      const cell=document.getElementById("comp-c-"+idx+"-"+h);
+      if(!cell)continue;
+      const localMins=(h*60+c._o+24*60*10)%(24*60);
+      const lh=Math.floor(localMins/60);
+      const localH=new Date(now.toLocaleString("en-US",{timeZone:c.tz})).getHours();
+      const isNow=lh===localH&&h===istH;
+      cell.classList.toggle("now",isNow);
+    }
+  });
+  if(currentTab==="comp")positionNowLine();
+}
+
+function addCompCity(){
+  const sel=document.getElementById("compCitySelect");
+  const idx=parseInt(sel.value);
+  if(isNaN(idx))return;
+  if(compCities.includes(idx)){
+    // Flash the existing row to show it's already added
+    const el=document.getElementById("comp-now-"+idx);
+    if(el){el.style.background="rgba(212,102,26,.15)";setTimeout(()=>{el.style.background="";},800);}
+    return;
+  }
+  compCities.push(idx);lsSet("nk_comp",compCities);buildCompView();
+}
+function removeCompCity(idx){
+  if(idx===indiaIdx)return;// can't remove home city
+  compCities=compCities.filter(i=>i!==idx);lsSet("nk_comp",compCities);buildCompView();
+}
+
+// ── MY MARKETS ──
+function isInAnyGroup(idx){
+  return Object.values(groups).some(arr=>arr.includes(idx));
+}
+
+function renderGroups(){
+  const el=document.getElementById("mmGroups");
+  const keys=Object.keys(groups);
+  if(!keys.length){
+    el.innerHTML='<div class="mm-empty"><div>No market groups yet.</div><div class="mm-empty-hint">Create a group, then click ⭐ on any city card to add it.</div></div>';
+    return;
+  }
+  el.innerHTML=keys.map((gname,gi)=>{
+    const idxs=groups[gname]||[];
+    const gkey=gname.replace(/[^a-z0-9]/gi,'_');
+    const cards=idxs.length?idxs.map(i=>{
+      const c=C[i];if(!c)return"";
+      const off=c._o;const biz=bizStatus(c.tz);const cls=off>0?"ah":off<0?"bh":"sm";
+      return '<div class="card '+cls+' in-group" style="cursor:default" data-gname="'+encodeURIComponent(gname)+'" data-cidx="'+i+'">'
+        +'<div class="mm-rm-btn" data-gname="'+encodeURIComponent(gname)+'" data-cidx="'+i+'" title="Remove" style="position:absolute;top:6px;right:6px;cursor:pointer;font-size:12px;opacity:.5">✕</div>'
+        +'<div class="ct"><div class="ct-left"><div class="fl2">'+c.flag+'</div><div><div class="cn">'+c.city+'</div><div class="cc">'+c.country+'</div><div class="clang">'+c.langs+'</div></div></div></div>'
+        +'<div class="tb" id="mm-t-'+gkey+'-'+i+'">'+fmt12short(c.tz)+'</div>'
+        +'<div class="bstat '+biz.cls+'">'+biz.icon+' '+biz.label+'</div>'
+        +'<div style="font-size:8px;color:var(--muted);margin-top:4px">'+utcl(c.tz)+'</div>'
+        +'</div>';
+    }).join(""):'<div class="mm-empty" style="padding:16px"><div style="font-size:12px;color:var(--muted)">No cities yet — search below to add.</div></div>';
+
+    return '<div class="mm-group">'
+      +'<div class="mm-group-collapse open" id="mgc-'+gkey+'">'
+        +'<div class="mm-group-hdr" onclick="handleGroupHdrClick(event,\''+gkey+'\')">'
+          +'<div class="mm-chevron" id="mgchev-'+gkey+'">▼</div>'
+          +'<div class="mm-group-name">'+gname+'</div>'
+          +'<div class="mm-group-count">'+idxs.length+' market'+(idxs.length!==1?"s":"")+'</div>'
+          +'<div class="mm-group-btns">'
+            +'<button class="mm-gbtn mm-compare-btn" data-gname="'+encodeURIComponent(gname)+'" onclick="compareGroup(\''+gname.replace(/'/g,"\\'")+'\')" >⚖️ Compare</button>'
+            +'<button class="mm-gbtn del-grp mm-delete-btn" data-gname="'+encodeURIComponent(gname)+'" onclick="deleteGroup(\''+gname.replace(/'/g,"\\'")+'\')" >Delete</button>'
+          +'</div>'
+        +'</div>'
+        +'<div class="mm-group-body">'
+          +'<div class="mm-cities">'+cards+'</div>'
+          +'<div class="mm-add-wrap">'
+            +'<div class="mm-add-row">'
+              +'<input type="text" class="mm-add-input" id="mma-inp-'+gkey+'" placeholder="Search city to add…" autocomplete="off" oninput="buildMmAddSugs(\''+gkey+'\',\''+encodeURIComponent(gname)+'\')" onkeydown="mmAddKeyDown(event,\''+gkey+'\',\''+encodeURIComponent(gname)+'\')">'
+              +'<button class="mm-add-btn" onclick="mmAddFirst(\''+gkey+'\',\''+encodeURIComponent(gname)+'\')">+ Add</button>'
+            +'</div>'
+            +'<div class="mm-add-sugs" id="mma-sugs-'+gkey+'"></div>'
+          +'</div>'
+        +'</div>'
+      +'</div>'
+    +'</div>';
+  }).join("");
+  updateGroupTimes();
+}
+function toggleGroupCollapse(gkey){
+  const box=document.getElementById("mgc-"+gkey);
+  if(box)box.classList.toggle("open");
+}
+function handleGroupHdrClick(e,gkey){
+  // If click was on a button (compare/delete), stop propagation to prevent double-fire
+  // since buttons now have their own direct onclick handlers
+  if(e.target.closest(".mm-gbtn")){e.stopPropagation();return;}
+  toggleGroupCollapse(gkey);
+}
+// Add city search in My Markets
+let mmAddFocus=-1;
+function buildMmAddSugs(gkey,gnameEnc){
+  const gname=decodeURIComponent(gnameEnc);
+  const inp=document.getElementById("mma-inp-"+gkey);
+  const sugs=document.getElementById("mma-sugs-"+gkey);
+  if(!inp||!sugs)return;
+  const q=inp.value.toLowerCase().trim();
+  if(!q){sugs.classList.remove("show");sugs.innerHTML="";return;}
+  const current=groups[gname]||[];
+  const matches=C.map((c,i)=>({c,i}))
+    .filter(({c,i})=>!current.includes(i)&&(c.city.toLowerCase().includes(q)||c.country.toLowerCase().includes(q)))
+    .slice(0,8);
+  if(!matches.length){sugs.innerHTML='<div class="mm-add-sug-item" style="color:var(--muted);justify-content:center;font-style:italic">No results</div>';sugs.classList.add("show");return;}
+  sugs.innerHTML=matches.map(({c,i})=>'<div class="mm-add-sug-item" data-cidx="'+i+'"><span style="font-size:16px">'+c.flag+'</span><div><div style="font-weight:600;font-size:12px">'+c.city+'</div><div style="font-size:10px;color:var(--muted)">'+c.country+'</div></div><span style="font-size:9px;color:var(--muted2);margin-left:auto;white-space:nowrap">'+utcl(c.tz)+'</span></div>').join("");
+  sugs.classList.add("show");
+  sugs.querySelectorAll(".mm-add-sug-item[data-cidx]").forEach(item=>{
+    item.addEventListener("click",function(){mmAddCity(parseInt(this.dataset.cidx),gkey,gname);});
+  });
+  mmAddFocus=-1;
+}
+function mmAddKeyDown(e,gkey,gnameEnc){
+  const gname=decodeURIComponent(gnameEnc);
+  const sugs=document.getElementById("mma-sugs-"+gkey);
+  const items=sugs?sugs.querySelectorAll(".mm-add-sug-item[data-cidx]"):[];
+  if(e.key==="ArrowDown"){e.preventDefault();mmAddFocus=Math.min(mmAddFocus+1,items.length-1);items.forEach((it,i)=>it.classList.toggle("mfocused",i===mmAddFocus));}
+  else if(e.key==="ArrowUp"){e.preventDefault();mmAddFocus=Math.max(mmAddFocus-1,0);items.forEach((it,i)=>it.classList.toggle("mfocused",i===mmAddFocus));}
+  else if(e.key==="Enter"){e.preventDefault();if(mmAddFocus>=0&&items[mmAddFocus])mmAddCity(parseInt(items[mmAddFocus].dataset.cidx),gkey,gname);}
+  else if(e.key==="Escape"){if(sugs)sugs.classList.remove("show");}
+}
+function mmAddFirst(gkey,gnameEnc){
+  const gname=decodeURIComponent(gnameEnc);
+  const sugs=document.getElementById("mma-sugs-"+gkey);
+  const first=sugs?sugs.querySelector(".mm-add-sug-item[data-cidx]"):null;
+  if(first)mmAddCity(parseInt(first.dataset.cidx),gkey,gname);
+}
+function mmAddCity(cidx,gkey,gname){
+  if(!groups[gname])groups[gname]=[];
+  if(!groups[gname].includes(cidx))groups[gname].push(cidx);
+  lsSet("nk_groups",groups);
+  const card=document.getElementById("cg"+cidx);
+  if(card)card.classList.add("in-group");
+  const inp=document.getElementById("mma-inp-"+gkey);
+  const sugs=document.getElementById("mma-sugs-"+gkey);
+  if(inp)inp.value="";if(sugs){sugs.classList.remove("show");sugs.innerHTML="";}
+  renderGroups();
+}
+function updateGroupTimes(){
+  Object.keys(groups).forEach(gname=>{
+    (groups[gname]||[]).forEach(i=>{
+      const c=C[i];if(!c)return;
+      const k=gname.replace(/[^a-z0-9]/gi,'_');
+      const el=document.getElementById("mm-t-"+k+"-"+i);
+      if(el)el.textContent=fmt12short(c.tz);
+    });
+  });
+}
+setInterval(()=>{if(currentTab==="mymarkets")updateGroupTimes();},10000);
+setInterval(()=>{if(currentTab==="comp")buildCompView();},5*60*1000);
+
+function openModal(){
+  document.getElementById("modalOverlay").classList.add("show");
+  document.getElementById("groupNameInput").value="";
+  setTimeout(()=>document.getElementById("groupNameInput").focus(),100);
+}
+function closeModal(){document.getElementById("modalOverlay").classList.remove("show");}
+function confirmCreateGroup(){
+  const name=document.getElementById("groupNameInput").value.trim();
+  if(!name)return;
+  if(groups[name]){alert("A group with this name already exists.");return;}
+  groups[name]=[];lsSet("nk_groups",groups);closeModal();renderGroups();
+}
+document.getElementById("groupNameInput").addEventListener("keydown",function(e){if(e.key==="Enter")confirmCreateGroup();if(e.key==="Escape")closeModal();});
+
+function deleteGroup(gname){
+  // Use custom modal (confirm() fails silently in iframes/sandboxed contexts)
+  document.getElementById("confirmTitle").textContent="Delete Group?";
+  document.getElementById("confirmMsg").textContent="Delete group '"+gname+"'? Cities inside are not deleted — just this group.";
+  document.getElementById("confirmOkBtn").onclick=function(){
+    closeConfirm();
+    delete groups[gname];lsSet("nk_groups",groups);
+    document.querySelectorAll("[data-idx]").forEach(card=>{
+      const idx=parseInt(card.dataset.idx);if(isNaN(idx))return;
+      card.classList.toggle("in-group",isInAnyGroup(idx));
+    });
+    renderGroups();
+  };
+  document.getElementById("confirmOverlay").classList.add("show");
+}
+function closeConfirm(){
+  document.getElementById("confirmOverlay").classList.remove("show");
+}
+
+function removeFromGroup(gname,idx){
+  groups[gname]=(groups[gname]||[]).filter(i=>i!==idx);
+  lsSet("nk_groups",groups);
+  const card=document.getElementById("cg"+idx);
+  if(card&&!isInAnyGroup(idx))card.classList.remove("in-group");
+  renderGroups();
+}
+
+function compareGroup(gname){
+  const idxs=groups[gname]||[];
+  compCities=[indiaIdx,...idxs.filter(i=>i!==indiaIdx)];
+  lsSet("nk_comp",compCities);
+  // Force tab switch + rebuild
+  if(currentTab==="comp"){
+    buildCompView();
+  } else {
+    showTab("comp");
+  }
+}
+
+// Toggle group assignment from card star click
+let groupMenuOpen=null;
+function toggleGroupMenu(idx,e){
+  e.stopPropagation();
+  const gnames=Object.keys(groups);
+  if(!gnames.length){openModal();return;}
+  if(groupMenuOpen&&groupMenuOpen.dataset.idx==idx){groupMenuOpen.remove();groupMenuOpen=null;return;}
+  if(groupMenuOpen){groupMenuOpen.remove();groupMenuOpen=null;}
+  const menu=document.createElement("div");
+  menu.dataset.idx=idx;
+  menu.style.cssText="position:fixed;z-index:500;background:#fff;border:1px solid var(--brd2);border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.15);padding:8px;min-width:200px;font-family:Inter,sans-serif;font-size:12px;max-height:300px;overflow-y:auto;";
+  const rect=e.target.getBoundingClientRect();
+  let top=rect.bottom+4,left=rect.right-200;
+  if(top+300>window.innerHeight)top=rect.top-310;
+  if(left<8)left=8;
+  menu.style.top=Math.max(8,top)+"px";menu.style.left=left+"px";
+  menu.innerHTML='<div style="font-size:9px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;padding:0 4px;font-weight:600">Add / Remove from group</div>'
+    +gnames.map(g=>{
+      const inG=(groups[g]||[]).includes(idx);
+      return '<div class="gmenu-item" data-g="'+encodeURIComponent(g)+'" style="display:flex;align-items:center;gap:8px;padding:8px 8px;border-radius:5px;cursor:pointer;background:'+(inG?"rgba(27,43,75,.07)":"transparent")+'"><span>'+(inG?"✅":"⬜")+'</span><span style="flex:1;'+(inG?"font-weight:600":"")+'" >'+g+'</span></div>';
+    }).join("")
+    +'<div style="border-top:1px solid var(--brd);margin-top:6px;padding-top:6px">'
+      +'<div class="gmenu-new" style="padding:8px 8px;border-radius:5px;cursor:pointer;color:var(--navy);font-weight:500">+ Create New Group</div>'
+    +'</div>';
+  menu.addEventListener("click",function(ev){
+    const item=ev.target.closest(".gmenu-item");
+    const newgrp=ev.target.closest(".gmenu-new");
+    if(item){toggleInGroup(decodeURIComponent(item.dataset.g),idx);menu.remove();groupMenuOpen=null;}
+    else if(newgrp){openModal();menu.remove();groupMenuOpen=null;}
+  });
+  document.body.appendChild(menu);groupMenuOpen=menu;
+}
+function toggleInGroup(gname,idx){
+  if(!groups[gname])groups[gname]=[];
+  const arr=groups[gname];const pos=arr.indexOf(idx);
+  if(pos>=0)arr.splice(pos,1);else arr.push(idx);
+  lsSet("nk_groups",groups);
+  const card=document.getElementById("cg"+idx);
+  if(card)card.classList.toggle("in-group",isInAnyGroup(idx));
+  if(groupMenuOpen){groupMenuOpen.remove();groupMenuOpen=null;}
+  if(currentTab==="mymarkets")renderGroups();
+}
+document.addEventListener("click",function(e){
+  if(groupMenuOpen&&!groupMenuOpen.contains(e.target)){groupMenuOpen.remove();groupMenuOpen=null;}
+});
+
+function showTab(tab){
+  document.querySelectorAll(".tab").forEach(t=>t.classList.toggle("active",t.dataset.tab===tab));
+  ["clockView","tableView","compView","myMarketsView","calcView","holidayView","tipsView"].forEach(v=>{
+    const el=document.getElementById(v);if(el)el.style.display="none";
+  });
+  const map={clock:"clockView",table:"tableView",comp:"compView",mymarkets:"myMarketsView",calc:"calcView",holiday:"holidayView",tips:"tipsView"};
+  const el=document.getElementById(map[tab]);if(el)el.style.display="block";
+  currentTab=tab;
+  const isGrid=tab==="clock"||tab==="table"||tab==="holiday";
+  document.getElementById("countBar").style.display=isGrid?"flex":"none";
+  document.getElementById("scrollHint").classList.remove("show");
+  document.getElementById("mainScroll").scrollTop=0;
+  if(tab==="table")buildTable();
+  if(tab==="holiday")buildHolidays();
+  if(tab==="mymarkets")renderGroups();
+  if(tab==="comp")buildCompView();
+}
+
+// ── SORT DROPDOWN ──
+const SORT_LABELS={az:"🔤 City A–Z",za:"🔤 City Z–A",caz:"🌍 Country A–Z",cont:"🗺 Continent A–Z",ua:"⬆️ UTC Early",ud:"⬇️ UTC Late",ew:"🌏 East→West",we:"🌎 West→East",biz_open:"📞 Best Call",biz_mail:"📧 Best Email",open_first:"🟢 Open First"};
+let sortDropOpen=false;
+function toggleSortDrop(){
+  sortDropOpen=!sortDropOpen;
+  document.getElementById("sortDropdown").classList.toggle("open",sortDropOpen);
+  document.getElementById("sortTrigger").classList.toggle("open",sortDropOpen);
+}
+document.addEventListener("click",function(e){
+  if(!sortDropOpen)return;
+  const wrap=document.getElementById("sortDropWrap");
+  if(wrap&&!wrap.contains(e.target)){sortDropOpen=false;document.getElementById("sortDropdown").classList.remove("open");document.getElementById("sortTrigger").classList.remove("open");}
+});
+document.querySelectorAll(".sort-opt[data-s]").forEach(opt=>{
+  opt.addEventListener("click",function(){
+    document.querySelectorAll(".sort-opt[data-s]").forEach(o=>o.classList.remove("s-active"));
+    this.classList.add("s-active");currentSort=this.dataset.s;
+    document.getElementById("sortTrigLabel").textContent=this.textContent;
+    sortDropOpen=false;document.getElementById("sortDropdown").classList.remove("open");document.getElementById("sortTrigger").classList.remove("open");
+    doSort();
+  });
+});
+function doSort(){
+    const BIZ_PRI={"best_call":1,"best_mail":2,"open":3,"not_open":4,"closing":5,"lunch":6,"closed":7,"weekend":8};
+    const sortFn=(a,b)=>{
+      if(currentSort==="az")return a.dataset.q.split(" ")[0].localeCompare(b.dataset.q.split(" ")[0]);
+      if(currentSort==="za")return b.dataset.q.split(" ")[0].localeCompare(a.dataset.q.split(" ")[0]);
+      if(currentSort==="caz"){return(a.dataset.ctr||"").localeCompare(b.dataset.ctr||"")||a.dataset.q.split(" ")[0].localeCompare(b.dataset.q.split(" ")[0]);}
+      if(currentSort==="ua")return+a.dataset.off-+b.dataset.off;
+      if(currentSort==="ud")return+b.dataset.off-+a.dataset.off;
+      if(currentSort==="ew")return+b.dataset.lon-+a.dataset.lon;
+      if(currentSort==="we")return+a.dataset.lon-+b.dataset.lon;
+      if(currentSort==="open_first"||currentSort==="biz_open"){return(BIZ_PRI[a.dataset.biz]||9)-(BIZ_PRI[b.dataset.biz]||9)||a.dataset.q.split(" ")[0].localeCompare(b.dataset.q.split(" ")[0]);}
+      if(currentSort==="biz_mail"){const mf=s=>s==="best_mail"?0:s==="best_call"?1:s==="open"?2:3;return mf(a.dataset.biz)-mf(b.dataset.biz)||a.dataset.q.split(" ")[0].localeCompare(b.dataset.q.split(" ")[0]);}
+      if(currentSort==="cont")return(a.dataset.cont||"").localeCompare(b.dataset.cont||"")||a.dataset.q.split(" ")[0].localeCompare(b.dataset.q.split(" ")[0]);
+      return 0;
+    };
+    const sl=document.getElementById("sortLabel");if(sl)sl.textContent="sorted "+(SORT_LABELS[currentSort]||"").replace(/[🔤🌍🌎🌏⬆️⬇️📞📧🟢🗺]/g,"").trim();
+    const g=document.getElementById("grid");[...g.querySelectorAll(".card")].sort(sortFn).forEach(c=>g.appendChild(c));
+    const tb=document.getElementById("tblBody");if(tb)[...tb.querySelectorAll("tr")].sort(sortFn).forEach(r=>tb.appendChild(r));
+    applyAll();
+}
+
+// ── HOLIDAY FILTER: show/hide country cards based on whether any city in that country passes filter ──
+// Country name in HOLS data → matching country name(s) in C[]
+const HOL_COUNTRY_MAP={
+  "India":"India","USA":"USA","China":"China","Germany":"Germany",
+  "UAE":"UAE","Japan":"Japan","UK":"UK","Saudi Arabia":"Saudi Arabia"
+};
+function applyHolidayFilter(){
+  const holGrid=document.getElementById("holGrid");
+  if(!holGrid||!holGrid.dataset.built)return;
+  // Build set of countries that have at least one city in filteredIndices
+  const visibleCountries=new Set([...filteredIndices].map(i=>C[i].country));
+  let holVisible=0;
+  holGrid.querySelectorAll(".hol-card").forEach(card=>{
+    const cname=card.dataset.country;
+    const mapped=HOL_COUNTRY_MAP[cname];
+    const show=!mapped||visibleCountries.has(mapped);
+    card.classList.toggle("hidden",!show);
+    if(show)holVisible++;
+  });
+  // Update count bar when on holidays tab
+  if(currentTab==="holiday"){
+    document.getElementById("cd").textContent=filteredIndices.size;
+  }
+}
+
+// ── DROPDOWN REFRESH: rebuild planner + compare city selects to only include filtered cities ──
+function refreshCityDropdowns(){
+  const opts=C.map((c,i)=>{
+    if(!filteredIndices.has(i))return"";
+    return'<option value="'+i+'">'+c.flag+' '+c.city+', '+c.country+'</option>';
+  }).join("");
+  ["targetCity","mw1","mw2","destCity"].forEach(id=>{
+    const el=document.getElementById(id);if(!el)return;
+    const prev=el.value;el.innerHTML=opts;
+    // Restore selection if still valid
+    if(opts.includes('value="'+prev+'"'))el.value=prev;
+  });
+  const mw3=document.getElementById("mw3");
+  if(mw3){
+    const prev=mw3.value;
+    mw3.innerHTML='<option value="">— skip —</option>'+opts;
+    if(prev&&opts.includes('value="'+prev+'"'))mw3.value=prev;
+  }
+  const cs=document.getElementById("compCitySelect");
+  if(cs){const prev=cs.value;cs.innerHTML=opts;if(opts.includes('value="'+prev+'"'))cs.value=prev;}
+}
+
+// FILTER
+function applyAll(){
+  const q=document.getElementById("srch").value.toLowerCase().trim();
+  let sh=0;
+  filteredIndices=new Set();
+  document.querySelectorAll("#grid .card").forEach(card=>{
+    const langOk=!langFilter.length||langFilter.some(l=>card.dataset.langs&&card.dataset.langs.includes(l.toLowerCase()));
+    const bizOk=!bizFilters.size||bizFilters.has(card.dataset.biz);
+    const contOk=!locFilters.cont.size||locFilters.cont.has(card.dataset.cont);
+    const regOk=!locFilters.reg.size||locFilters.reg.has(card.dataset.reg);
+    const ctrOk=!locFilters.ctr.size||locFilters.ctr.has(card.dataset.ctr);
+    const tzOk=!locFilters.tz.size||locFilters.tz.has(card.dataset.tz);
+    const ok=contOk&&regOk&&ctrOk&&tzOk&&(!q||card.dataset.q.includes(q))&&bizOk&&langOk;
+    card.classList.toggle("hidden",!ok);
+    if(ok){sh++;filteredIndices.add(parseInt(card.dataset.idx));}
+  });
+  document.querySelectorAll("#tblBody tr").forEach(row=>{
+    const langOkR=!langFilter.length||langFilter.some(l=>row.dataset.langs&&row.dataset.langs.includes(l.toLowerCase()));
+    const bizOkR=!bizFilters.size||bizFilters.has(row.dataset.biz);
+    const contOkR=!locFilters.cont.size||locFilters.cont.has(row.dataset.cont);
+    const regOkR=!locFilters.reg.size||locFilters.reg.has(row.dataset.reg);
+    const ctrOkR=!locFilters.ctr.size||locFilters.ctr.has(row.dataset.ctr);
+    const tzOkR=!locFilters.tz.size||locFilters.tz.has(row.dataset.tz);
+    const ok=contOkR&&regOkR&&ctrOkR&&tzOkR&&(!q||row.dataset.q.includes(q))&&bizOkR&&langOkR;
+    row.classList.toggle("hidden",!ok);
+  });
+  document.getElementById("cd").textContent=sh;
+  applyHolidayFilter();
+  refreshCityDropdowns();
+  // Active filter chips
+  const af=document.getElementById("activeFilters");
+  af.innerHTML="";
+  const X='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>';
+  function chip(label,key){return '<span class="af-chip" data-clear="'+key+'">'+label+X+'</span>';}
+  if(q)af.innerHTML+=chip("Search: "+q,"q");
+  locFilters.cont.forEach(v=>af.innerHTML+=chip(v,"loc_cont:"+v));
+  locFilters.reg.forEach(v=>af.innerHTML+=chip(v,"loc_reg:"+v));
+  locFilters.ctr.forEach(v=>af.innerHTML+=chip(v,"loc_ctr:"+v));
+  locFilters.tz.forEach(v=>af.innerHTML+=chip(utcl(v),"loc_tz:"+v));
+  if(bizFilters.size){const BL={"open":"Open Now","best_call":"Best Call","best_mail":"Best Email","closing":"Closing","lunch":"Lunch","not_open":"Opening Soon","closed":"Closed","weekend":"Weekend"};[...bizFilters].forEach(v=>af.innerHTML+=chip(BL[v]||v,"biz:"+v));}
+  langFilter.forEach(l=>af.innerHTML+=chip(l,"lang:"+l));
+  const fc=[q].filter(Boolean).length+locFilters.cont.size+locFilters.reg.size+locFilters.ctr.size+locFilters.tz.size+bizFilters.size+langFilter.length;
+  document.getElementById("filterDot").classList.toggle("show",fc>0);
+  document.getElementById("filterDot").textContent=fc>1?fc:"";
+}
+document.getElementById("activeFilters").addEventListener("click",function(e){
+  const chip=e.target.closest("[data-clear]");if(chip)clearFilter(chip.dataset.clear);
+});
+document.getElementById("srch").addEventListener("input",applyAll);
+
+function clearFilter(type){
+  if(type==="q")document.getElementById("srch").value="";
+  else if(type.startsWith("loc_")){const rest=type.slice(4);const col=rest.indexOf(":");const key=rest.slice(0,col);const val=rest.slice(col+1);locFilters[key].delete(val);syncLocUi(key);buildLocList(key);}
+  else if(type.startsWith("biz:")){const v=type.slice(4);bizFilters.delete(v);const cb=document.querySelector('#bizMsList input[value="'+v+'"]');if(cb){cb.checked=false;cb.closest(".ms-item").classList.remove("checked");}syncBizUi();}
+  else if(type.startsWith("lang:")){const l=type.slice(5);langFilter=langFilter.filter(x=>x!==l);syncLangUi();}
+  applyAll();
+}
+function resetFilters(){
+  document.getElementById("srch").value="";
+  ["cont","reg","ctr","tz"].forEach(key=>{locFilters[key].clear();syncLocUi(key);});
+  clearMsBiz();clearMsLang();
+  applyAll();
+}
+function syncBizUi(){
+  document.querySelectorAll("#bizMsList input[type=checkbox]").forEach(cb=>{
+    cb.checked=bizFilters.has(cb.value);cb.closest(".ms-item").classList.toggle("checked",cb.checked);
+  });
+  const n=bizFilters.size;
+  const badge=document.getElementById("bizMsBadge");const lbl=document.getElementById("bizMsLabel");const cnt=document.getElementById("bizMsCount");const chips=document.getElementById("bizMsChips");
+  if(badge){badge.textContent=n;badge.style.display=n?"inline-block":"none";}
+  if(lbl){lbl.textContent=n?"("+n+" selected)":"Any status…";lbl.className="ms-trigger-label"+(n?"":" placeholder");}
+  if(cnt)cnt.textContent=n+" selected";
+  const BL={"open":"🟢 Open","best_call":"📞 Call","best_mail":"📧 Email","closing":"⚠️ Closing","lunch":"🍽 Lunch","not_open":"⏳ Opening","closed":"🔴 Closed","weekend":"🗓 Weekend"};
+  if(chips)chips.innerHTML=[...bizFilters].map(v=>'<span class="ms-chip" data-bv="'+v+'">'+BL[v]+' <span class="ms-chip-x">✕</span></span>').join("");
+}
+function syncLangUi(){
+  const chips=document.getElementById("langMsChips");
+  const lbl=document.getElementById("langMsLabel");const badge=document.getElementById("langMsBadge");
+  if(lbl){lbl.textContent=langFilter.length?"("+langFilter.length+" selected)":"Any language…";lbl.className="ms-trigger-label"+(langFilter.length?"":" placeholder");}
+  if(badge){badge.textContent=langFilter.length;badge.style.display=langFilter.length?"inline-block":"none";}
+  if(chips)chips.innerHTML=langFilter.map(l=>'<span class="ms-chip" data-lv="'+l+'">'+l+' <span class="ms-chip-x">✕</span></span>').join("");
+}
+
+// TABS
+document.querySelectorAll(".tab").forEach(tab=>{
+  tab.addEventListener("click",()=>{
+    if(document.getElementById("drawer").classList.contains("open"))closeDrawer();
+    showTab(tab.dataset.tab);
+  });
+});
+
+// DRAWER
+function openDrawer(){document.getElementById("drawer").classList.add("open");document.getElementById("overlay").classList.add("show");document.getElementById("menuBtn").classList.add("active-menu");document.body.style.overflow="hidden";}
+function closeDrawer(){document.getElementById("drawer").classList.remove("open");document.getElementById("overlay").classList.remove("show");document.getElementById("menuBtn").classList.remove("active-menu");document.body.style.overflow="";}
+document.addEventListener("keydown",function(e){
+  if(e.key==="Escape"&&document.getElementById("drawer").classList.contains("open"))closeDrawer();
+  if(e.key==="Escape"&&document.getElementById("modalOverlay").classList.contains("show"))closeModal();
+  if(e.key==="Escape"&&document.getElementById("confirmOverlay").classList.contains("show"))closeConfirm();
+});
+
+// SCROLL HINT
+let lastSY=0,hintShown=false;
+const mainEl=document.getElementById("mainScroll");
+mainEl.addEventListener("scroll",()=>{
+  if(currentTab!=="clock"&&currentTab!=="table")return;
+  const sy=mainEl.scrollTop;
+  if(sy>100&&sy>lastSY&&!hintShown){document.getElementById("scrollHint").classList.add("show");hintShown=true;}
+  else if(sy<50&&hintShown){document.getElementById("scrollHint").classList.remove("show");hintShown=false;}
+  lastSY=sy;
+},{passive:true});
+function showScrollTop(){mainEl.scrollTo({top:0,behavior:"smooth"});setTimeout(()=>{document.getElementById("scrollHint").classList.remove("show");hintShown=false;},500);}
+
+// PLANNER
+function calcMeeting(){
+  const istVal=document.getElementById("istInput").value;const cidx=parseInt(document.getElementById("targetCity").value)||0;
+  if(!istVal){alert("Please enter an IST time.");return;}
+  const city=C[cidx];const [ih,im]=istVal.split(":").map(Number);const off=city._o;
+  let lh=ih+Math.floor(off/60),lm=im+(off%60);
+  if(lm<0){lm+=60;lh--;}if(lm>=60){lm-=60;lh++;}lh=((lh%24)+24)%24;
+  const biz=bizStatus(city.tz);
+  const lAmpm=lh>=12?"PM":"AM";const lH12=lh%12||12;
+  const iAmpm=ih>=12?"PM":"AM";const iH12=ih%12||12;
+  let advice="";
+  if(biz.s==="best_call")advice="✅ Great time to call "+city.city+". Currently in prime business hours.";
+  else if(biz.s==="open")advice="✅ Good time to call "+city.city+". Offices are open.";
+  else if(biz.s==="closing")advice="⚠️ "+city.city+" closes within the hour. Call immediately or reschedule.";
+  else if(biz.s==="weekend")advice="❌ Weekend in "+city.city+". Call back on their next working day.";
+  else if(biz.s==="lunch")advice="🍽 Lunch break in "+city.city+". Try again after 2:00 PM local.";
+  else if(biz.s==="best_mail")advice="📧 Good time to send an email to "+city.city+" — it'll land at the start of their day.";
+  else if(biz.s==="not_open")advice="⏳ "+city.city+" offices open very soon. Call in 30 minutes.";
+  else advice="❌ Offices closed in "+city.city+". Business hours 9 AM–6 PM local.";
+  const el=document.getElementById("meetResult");el.className="result-box show";
+  el.innerHTML='<div class="rrow"><span class="rl">Your '+document.getElementById("homeTzLabel").textContent.replace(" Live","")+'</span><span class="rv">'+iH12+":"+pad(im)+" "+iAmpm+'</span></div>'
+    +'<div class="rrow"><span class="rl">Local time in '+city.city+'</span><span class="rv">'+lH12+":"+pad(lm)+" "+lAmpm+'</span></div>'
+    +'<div class="rrow"><span class="rl">Language(s)</span><span class="rv" style="font-family:Inter,sans-serif;font-size:11px;text-align:right;max-width:200px">'+city.langs+'</span></div>'
+    +'<div class="rrow"><span class="rl">UTC Offset</span><span class="rv">'+utcl(city.tz)+'</span></div>'
+    +'<div class="rrow"><span class="rl">vs IST</span><span class="rv">'+fmto(off)+'</span></div>'
+    +'<div class="rrow"><span class="rl">Status Now</span><span class="rv">'+biz.icon+' '+biz.label+'</span></div>'
+    +'<div class="result-hl">'+advice+'</div>';
+}
+
+function findWindow(){
+  const idx1=parseInt(document.getElementById("mw1").value)||0;const idx2=parseInt(document.getElementById("mw2").value)||0;
+  const idx3v=document.getElementById("mw3").value;const cities=[C[idx1],C[idx2]];
+  if(idx3v)cities.push(C[parseInt(idx3v)]);
+  const slots=[];
+  for(let h=0;h<24;h++){for(let m=0;m<60;m+=30){
+    const istMins=h*60+m;
+    const allOpen=cities.every(city=>{const lm=((istMins+city._o)%(24*60)+24*60)%(24*60);return lm>=9*60&&lm<18*60&&!(lm>=12*60+30&&lm<14*60);});
+    if(allOpen)slots.push(h*60+m);
+  }}
+  const el=document.getElementById("windowResult");el.className="result-box show";
+  if(!slots.length){el.innerHTML='<div class="result-hl">❌ No overlapping business hours found. Consider async communication or accept an off-hours call for one party.</div>';return;}
+  const homeTzAbbr=document.getElementById("homeTzLabel").textContent.replace(" Live","");
+  const fmt=s=>{const h=Math.floor(s/60),m=s%60,ap=h>=12?"PM":"AM",h12=h%12||12;return h12+":"+pad(m)+" "+ap+" "+homeTzAbbr;};
+  const ranges=[];let st=slots[0],pr=slots[0];
+  for(let i=1;i<slots.length;i++){if(slots[i]-pr>30){ranges.push([st,pr]);st=slots[i];}pr=slots[i];}
+  ranges.push([st,pr]);
+  el.innerHTML='<div style="font-size:11px;color:var(--muted);margin-bottom:8px">Best '+homeTzAbbr+' windows (12-hr) when all markets are open:</div>'
+    +ranges.map(r=>'<div class="rrow"><span class="rv good">'+fmt(r[0])+' — '+fmt(r[1]+30)+'</span><span class="rl">overlap window</span></div>').join("")
+    +'<div class="result-hl">✅ '+ranges.length+' window'+(ranges.length>1?"s ":" ")+'found. Schedule in earlier windows for best engagement.</div>';
+}
+
+function calcShipping(){
+  const d=document.getElementById("dispDate").value;
+  const dFrom=parseInt(document.getElementById("transitFrom").value)||18;
+  const dTo=parseInt(document.getElementById("transitTo").value)||25;
+  const cidx=parseInt(document.getElementById("destCity").value)||0;
+  if(!d){alert("Please select a dispatch date.");return;}
+  if(dFrom>dTo){alert("'Transit From' must be ≤ 'Transit To'.");return;}
+  const city=C[cidx];const dispatch=new Date(d+"T00:00:00");
+  const arrEarly=new Date(dispatch);arrEarly.setDate(arrEarly.getDate()+dFrom);
+  const arrLate=new Date(dispatch);arrLate.setDate(arrLate.getDate()+dTo);
+  const WD=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+  const MN=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  const isME=ME_TZ.includes(city.tz);
+  const isWE_early=isME?(arrEarly.getDay()===5||arrEarly.getDay()===6):(arrEarly.getDay()===0||arrEarly.getDay()===6);
+  const isWE_late=isME?(arrLate.getDay()===5||arrLate.getDay()===6):(arrLate.getDay()===0||arrLate.getDay()===6);
+  const fmtD=dt=>WD[dt.getDay()]+", "+dt.getDate()+" "+MN[dt.getMonth()]+" "+dt.getFullYear();
+  const midDays=Math.round((dFrom+dTo)/2);const midArr=new Date(dispatch);midArr.setDate(midArr.getDate()+midDays);
+  const isWE_mid=isME?(midArr.getDay()===5||midArr.getDay()===6):(midArr.getDay()===0||midArr.getDay()===6);
+  const advice=isWE_mid?"⚠️ Mid-range ETA ("+fmtD(midArr)+") falls on a weekend at destination. Customs may begin the next business day (+1–2 days). Consider adjusting dispatch.":"✅ Mid-range ETA ("+fmtD(midArr)+") is a business day. Notify your CHA &amp; buyer 48h before earliest ETA. Ensure docs couriered ahead.";
+  const el=document.getElementById("shipResult");el.className="result-box show";
+  el.innerHTML=
+    '<div class="rrow"><span class="rl">Dispatch</span><span class="rv">'+fmtD(dispatch)+'</span></div>'
+    +'<div class="rrow"><span class="rl">Transit Range</span><span class="rv">'+dFrom+' – '+dTo+' days (≈ '+midDays+' days mid)</span></div>'
+    +'<div class="rrow"><span class="rl">Earliest ETA</span><span class="rv '+(isWE_early?"warn":"good")+'">'+fmtD(arrEarly)+'</span></div>'
+    +'<div class="rrow"><span class="rl">Latest ETA</span><span class="rv '+(isWE_late?"warn":"good")+'">'+fmtD(arrLate)+'</span></div>'
+    +'<div class="rrow"><span class="rl">Most Likely ETA</span><span class="rv '+(isWE_mid?"warn":"good")+'" style="font-size:12px">'+fmtD(midArr)+'</span></div>'
+    +'<div class="rrow"><span class="rl">Destination</span><span class="rv" style="font-family:Inter,sans-serif">'+city.flag+' '+city.city+'</span></div>'
+    +'<div class="rrow"><span class="rl">Destination TZ</span><span class="rv">'+utcl(city.tz)+'</span></div>'
+    +'<div class="rrow"><span class="rl">Language</span><span class="rv" style="font-family:Inter,sans-serif;font-size:11px">'+city.langs+'</span></div>'
+    +'<div class="result-hl">'+advice+'</div>';
+}
+
+// HOLIDAYS
+function buildHolidays(){
+  const el=document.getElementById("holGrid");if(!el)return;
+  if(el.dataset.built){applyHolidayFilter();return;}
+  el.dataset.built="1";
+  const today=new Date();const yr=today.getFullYear();
+  const HOLS=[
+    {country:"India",flag:"🇮🇳",list:[{n:"Republic Day",d:yr+"-01-26"},{n:"Holi",d:yr+"-03-14"},{n:"Good Friday",d:yr+"-04-18"},{n:"Eid ul-Fitr",d:yr+"-03-30"},{n:"Diwali",d:yr+"-10-20"},{n:"Christmas",d:yr+"-12-25"}]},
+    {country:"USA",flag:"🇺🇸",list:[{n:"New Year",d:yr+"-01-01"},{n:"Memorial Day",d:yr+"-05-26"},{n:"Independence Day",d:yr+"-07-04"},{n:"Labor Day",d:yr+"-09-01"},{n:"Thanksgiving",d:yr+"-11-27"},{n:"Christmas",d:yr+"-12-25"}]},
+    {country:"China",flag:"🇨🇳",list:[{n:"Chinese New Year",d:yr+"-01-29"},{n:"CNY End",d:yr+"-02-04"},{n:"Dragon Boat",d:yr+"-05-31"},{n:"National Day",d:yr+"-10-01"},{n:"Golden Week End",d:yr+"-10-07"},{n:"Mid-Autumn",d:yr+"-10-06"}]},
+    {country:"Germany",flag:"🇩🇪",list:[{n:"New Year",d:yr+"-01-01"},{n:"Good Friday",d:yr+"-04-18"},{n:"Easter Monday",d:yr+"-04-21"},{n:"Labour Day",d:yr+"-05-01"},{n:"Unity Day",d:yr+"-10-03"},{n:"Christmas",d:yr+"-12-25"}]},
+    {country:"UAE",flag:"🇦🇪",list:[{n:"New Year",d:yr+"-01-01"},{n:"Eid ul-Fitr",d:yr+"-03-30"},{n:"Eid ul-Adha",d:yr+"-06-06"},{n:"Islamic New Year",d:yr+"-06-27"},{n:"National Day",d:yr+"-12-02"},{n:"Prophet Birthday",d:yr+"-09-04"}]},
+    {country:"Japan",flag:"🇯🇵",list:[{n:"New Year",d:yr+"-01-01"},{n:"Coming of Age",d:yr+"-01-13"},{n:"Golden Week Start",d:yr+"-04-29"},{n:"Children's Day",d:yr+"-05-05"},{n:"Marine Day",d:yr+"-07-21"},{n:"Culture Day",d:yr+"-11-03"}]},
+    {country:"UK",flag:"🇬🇧",list:[{n:"New Year",d:yr+"-01-01"},{n:"Good Friday",d:yr+"-04-18"},{n:"Easter Monday",d:yr+"-04-21"},{n:"May Bank Holiday",d:yr+"-05-05"},{n:"Christmas",d:yr+"-12-25"},{n:"Boxing Day",d:yr+"-12-26"}]},
+    {country:"Saudi Arabia",flag:"🇸🇦",list:[{n:"Founding Day",d:yr+"-02-22"},{n:"Eid ul-Fitr",d:yr+"-03-30"},{n:"Eid ul-Adha",d:yr+"-06-06"},{n:"Islamic New Year",d:yr+"-06-27"},{n:"National Day",d:yr+"-09-23"},{n:"Prophet Birthday",d:yr+"-09-04"}]},
+  ];
+  const WD=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];const MN=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  el.innerHTML=HOLS.map(hc=>{
+    const items=hc.list.map(h=>{
+      const d=new Date(h.d+"T00:00:00");const diff=Math.ceil((d-today)/864e5);
+      const badge=diff===0?'<span class="hol-badge badge-today">Today</span>':diff>0&&diff<=60?'<span class="hol-badge badge-soon">'+diff+'d</span>':'<span class="hol-badge badge-past">Past</span>';
+      return '<div class="hol-row"><span class="hol-name">'+h.n+'</span><span class="hol-date">'+WD[d.getDay()]+", "+d.getDate()+" "+MN[d.getMonth()]+'</span>'+badge+'</div>';
+    }).join("");
+    return '<div class="hol-card" data-country="'+hc.country+'"><div class="hol-hdr"><span class="hol-flag">'+hc.flag+'</span><span class="hol-cname">'+hc.country+'</span></div>'+items+'</div>';
+  }).join("");
+  applyHolidayFilter();
+}
+
+// ── HOME LOCATION MODAL ──
+function openHomeModal(){
+  const modal=document.getElementById("homeModalOverlay");
+  modal.classList.add("show");
+  // Show current home
+  const hc=getHomeCity();
+  document.getElementById("homeCurrentFlag").textContent=hc.flag;
+  document.getElementById("homeCurrentCity").textContent=hc.city;
+  document.getElementById("homeCurrentSub").textContent=hc.country+" · "+hc.tz;
+  // Clear search
+  const inp=document.getElementById("homeSearchInput");
+  inp.value="";
+  document.getElementById("homeSuggestions").classList.remove("show");
+  document.getElementById("homeSuggestions").innerHTML="";
+  setTimeout(()=>inp.focus(),120);
+}
+function closeHomeModal(){
+  document.getElementById("homeModalOverlay").classList.remove("show");
+}
+document.getElementById("homeModalOverlay").addEventListener("click",function(e){
+  if(e.target===this)closeHomeModal();
+});
+document.addEventListener("keydown",function(e){
+  if(e.key==="Escape"&&document.getElementById("homeModalOverlay").classList.contains("show"))closeHomeModal();
+});
+
+let homeSugFocus=-1;
+function buildHomeSuggestions(query){
+  const sug=document.getElementById("homeSuggestions");
+  const q=query.toLowerCase().trim();
+  if(!q){sug.classList.remove("show");sug.innerHTML="";return;}
+  const matches=C.map((c,i)=>({c,i}))
+    .filter(({c})=>c.city.toLowerCase().includes(q)||c.country.toLowerCase().includes(q)||c.tz.toLowerCase().includes(q)||(c.langs&&c.langs.toLowerCase().includes(q)))
+    .slice(0,10);
+  if(!matches.length){
+    sug.innerHTML='<div class="home-sug-item" style="color:var(--muted);font-style:italic;justify-content:center">No city found</div>';
+    sug.classList.add("show");return;
+  }
+  sug.innerHTML=matches.map(({c,i})=>{
+    const isCurrent=i===homeIdx;
+    return '<div class="home-sug-item'+(isCurrent?" h-selected":"")+'" data-idx="'+i+'">'
+      +'<span class="home-sug-flag">'+c.flag+'</span>'
+      +'<div><div class="home-sug-city">'+c.city+(isCurrent?' <span style="font-size:9px;color:var(--saffron)">✓ current</span>':'')+'</div>'
+      +'<div class="home-sug-country">'+c.country+'</div></div>'
+      +'<span class="home-sug-tz">'+utcl(c.tz)+'</span>'
+      +'</div>';
+  }).join('');
+  sug.classList.add("show");
+  homeSugFocus=-1;
+}
+
+function applyHomeCity(idx){
+  if(idx===homeIdx){closeHomeModal();return;}
+  homeIdx=idx;
+  indiaIdx=idx;   // keep alias in sync
+  IST=getHomeTz();
+  try{localStorage.setItem("nk_home_idx",idx);}catch(e){}
+
+  // Update header clock label
+  const hc=getHomeCity();
+  const tzAbbr=(()=>{
+    // derive short label e.g. "IST","GST","EST"
+    try{
+      const parts=new Intl.DateTimeFormat("en-US",{timeZoneName:"short",timeZone:hc.tz}).formatToParts(new Date());
+      return(parts.find(p=>p.type==="timeZoneName")||{value:hc.city.slice(0,3).toUpperCase()}).value;
+    }catch(e){return hc.city.slice(0,3).toUpperCase();}
+  })();
+  document.getElementById("homeFlagHdr").textContent=hc.flag;
+  document.getElementById("homeTzLabel").textContent=tzAbbr+" Live";
+
+  // Update legend labels
+  const abbr=tzAbbr;
+  ["legendHomeName","legendHomeName2","legendHomeName3"].forEach(id=>{
+    const el=document.getElementById(id);if(el)el.textContent=abbr;
+  });
+
+  // Update table header
+  const tblVs=document.getElementById("tblVsHdr");
+  if(tblVs)tblVs.textContent="vs "+abbr;
+
+  // Update compare label
+  const compHL=document.getElementById("compHomeLabel");
+  if(compHL)compHL.textContent=hc.city;
+
+  // Update planner home labels
+  document.querySelectorAll(".planner-home-label").forEach(el=>el.textContent=abbr);
+
+  // Recompute all offsets relative to new home
+  Object.keys(oc).forEach(k=>delete oc[k]);
+  C.forEach(c=>c._o=goff(c.tz));
+
+  // Ensure home is first in compCities
+  compCities=compCities.filter(i=>i!==idx);
+  compCities=[idx,...compCities];
+  lsSet("nk_comp",compCities);
+
+  // Rebuild all views
+  buildGrid();
+  const tb=document.getElementById("tblBody");
+  if(tb){tb.dataset.built="";tb.innerHTML="";}
+  if(currentTab==="table")buildTable();
+  if(currentTab==="comp")buildCompView();
+  if(currentTab==="mymarkets")renderGroups();
+  upd();
+  closeHomeModal();
+}
+
+const homeInp=document.getElementById("homeSearchInput");
+homeInp.addEventListener("input",function(){buildHomeSuggestions(this.value);homeSugFocus=-1;});
+homeInp.addEventListener("keydown",function(e){
+  const sug=document.getElementById("homeSuggestions");
+  const items=sug.querySelectorAll(".home-sug-item[data-idx]");
+  if(e.key==="ArrowDown"){e.preventDefault();homeSugFocus=Math.min(homeSugFocus+1,items.length-1);items.forEach((it,i)=>it.classList.toggle("hfocused",i===homeSugFocus));}
+  else if(e.key==="ArrowUp"){e.preventDefault();homeSugFocus=Math.max(homeSugFocus-1,0);items.forEach((it,i)=>it.classList.toggle("hfocused",i===homeSugFocus));}
+  else if(e.key==="Enter"){e.preventDefault();if(homeSugFocus>=0&&items[homeSugFocus])applyHomeCity(parseInt(items[homeSugFocus].dataset.idx));}
+  else if(e.key==="Escape"){closeHomeModal();}
+});
+document.getElementById("homeSuggestions").addEventListener("click",function(e){
+  const item=e.target.closest(".home-sug-item[data-idx]");
+  if(item)applyHomeCity(parseInt(item.dataset.idx));
+});
+
+// Init home labels on load
+(function initHomeLabels(){
+  const hc=getHomeCity();
+  try{
+    const parts=new Intl.DateTimeFormat("en-US",{timeZoneName:"short",timeZone:hc.tz}).formatToParts(new Date());
+    const abbr=(parts.find(p=>p.type==="timeZoneName")||{value:hc.city.slice(0,3).toUpperCase()}).value;
+    document.getElementById("homeFlagHdr").textContent=hc.flag;
+    document.getElementById("homeTzLabel").textContent=abbr+" Live";
+    ["legendHomeName","legendHomeName2","legendHomeName3"].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=abbr;});
+    const tblVs=document.getElementById("tblVsHdr");if(tblVs)tblVs.textContent="vs "+abbr;
+    document.querySelectorAll(".planner-home-label").forEach(el=>el.textContent=abbr);
+    const compHL=document.getElementById("compHomeLabel");if(compHL)compHL.textContent=hc.city;
+  }catch(e){}
+})();
+
+// ── PLANNER CITY SEARCH ──
+(function setupPlannerSearch(){
+  const FIELDS=["targetCity","mw1","mw2","mw3","destCity"];
+  function buildPS(inputId,fieldId,sugId,query){
+    const sug=document.getElementById(sugId);if(!sug)return;
+    const q=query.toLowerCase().trim();
+    if(!q){sug.classList.remove("show");return;}
+    const matches=C.map((c,i)=>({c,i})).filter(({c,i})=>filteredIndices.has(i)&&(c.city.toLowerCase().includes(q)||c.country.toLowerCase().includes(q)||(c.langs&&c.langs.toLowerCase().includes(q)))).slice(0,8);
+    if(!matches.length){sug.innerHTML='<div class="planner-sug-item" style="color:var(--muted);font-style:italic;padding:10px 12px">No markets found</div>';sug.classList.add("show");return;}
+    sug.innerHTML=matches.map(({c,i})=>'<div class="planner-sug-item" data-idx="'+i+'"><span class="psug-flag">'+c.flag+'</span><div><div class="psug-city">'+c.city+'</div><div class="psug-country">'+c.country+'</div></div><span class="psug-tz">'+utcl(c.tz)+'</span></div>').join('');
+    sug.classList.add("show");
+  }
+  function selectPC(inputId,fieldId,sugId,idx){
+    const c=C[idx];if(!c)return;
+    const inp=document.getElementById(inputId);const sel=document.getElementById(fieldId);const sug=document.getElementById(sugId);
+    if(inp)inp.value=c.flag+' '+c.city+', '+c.country;
+    if(sel)sel.value=idx;
+    if(sug)sug.classList.remove("show");
+  }
+  FIELDS.forEach(fId=>{
+    const iId="pi-"+fId,sId="ps-"+fId;
+    const inp=document.getElementById(iId);const sug=document.getElementById(sId);
+    if(!inp||!sug)return;
+    let fc=-1;
+    inp.addEventListener("input",function(){
+      document.getElementById(fId).value="";
+      buildPS(iId,fId,sId,this.value);fc=-1;
+    });
+    inp.addEventListener("keydown",function(e){
+      const items=sug.querySelectorAll(".planner-sug-item[data-idx]");
+      if(e.key==="ArrowDown"){e.preventDefault();fc=Math.min(fc+1,items.length-1);items.forEach((it,i)=>it.classList.toggle("pfocused",i===fc));}
+      else if(e.key==="ArrowUp"){e.preventDefault();fc=Math.max(fc-1,0);items.forEach((it,i)=>it.classList.toggle("pfocused",i===fc));}
+      else if(e.key==="Enter"){e.preventDefault();if(fc>=0&&items[fc])selectPC(iId,fId,sId,parseInt(items[fc].dataset.idx));}
+      else if(e.key==="Escape"){sug.classList.remove("show");}
+    });
+    sug.addEventListener("click",function(e){
+      const item=e.target.closest(".planner-sug-item[data-idx]");
+      if(item)selectPC(iId,fId,sId,parseInt(item.dataset.idx));
+    });
+    document.addEventListener("click",function(e){
+      const wrap=document.getElementById("pw-"+fId);
+      if(wrap&&!wrap.contains(e.target))sug.classList.remove("show");
+    });
+  });
+})();
+</script></body>
+</html>
